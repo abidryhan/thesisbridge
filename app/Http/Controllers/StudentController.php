@@ -9,7 +9,7 @@ use Illuminate\View\View;
 
 class StudentController extends Controller
 {
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
         $existing = Student::where('user_id', auth()->id())->first();
 
