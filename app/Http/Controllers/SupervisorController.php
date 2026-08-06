@@ -9,7 +9,7 @@ use Illuminate\View\View;
 
 class SupervisorController extends Controller
 {
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
         $existing = Supervisor::where('user_id', auth()->id())->first();
 
