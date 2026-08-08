@@ -71,11 +71,21 @@ class CourseProjectController extends Controller
 
     public function edit(CourseProject $course_project): View
     {
+        if ($course_project->user_id !== auth()->id()) {
+                abort(403);
+            }
+
         return view('course-projects.edit', ['project' => $course_project]);
     }
 
     public function update(Request $request, CourseProject $course_project): RedirectResponse
     {
+
+        if ($course_project->user_id !== auth()->id()) {
+               abort(403);
+        }
+
+
         $validated = $this->validated($request);
 
         $validated['tech_stack'] = array_map('trim', explode(',', $validated['tech_stack']));
@@ -98,6 +108,10 @@ class CourseProjectController extends Controller
 
     public function destroy(CourseProject $course_project): RedirectResponse
     {
+        if ($course_project->user_id !== auth()->id()) {
+                abort(403);
+        }
+
         $course_project->delete();
 
         return redirect()->route('course-projects.index')
