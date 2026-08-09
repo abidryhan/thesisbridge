@@ -16,6 +16,9 @@
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('thesis-groups.index')" :active="request()->routeIs('thesis-groups.*')">
+                            {{ __('Thesis Groups') }}
+                        </x-nav-link>
                     @endauth
                     <x-nav-link :href="route('course-projects.index')" :active="request()->routeIs('course-projects.*')">
                         {{ __('Course Projects') }}
@@ -82,6 +85,9 @@
             @auth
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('thesis-groups.index')" :active="request()->routeIs('thesis-groups.*')">
+                    {{ __('Thesis Groups') }}
                 </x-responsive-nav-link>
             @endauth
             <x-responsive-nav-link :href="route('course-projects.index')" :active="request()->routeIs('course-projects.*')">
