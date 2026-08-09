@@ -4,6 +4,7 @@ use App\Http\Controllers\CourseProjectController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SupervisorController;
+use App\Http\Controllers\ThesisGroupController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('students', StudentController::class)->except(['index']);
     Route::resource('supervisors', SupervisorController::class)->except(['index']);
     Route::resource('course-projects', CourseProjectController::class)->except(['index', 'show']);
+    Route::resource('thesis-groups', ThesisGroupController::class);
 });
 
 Route::resource('course-projects', CourseProjectController::class)->only(['show']);
