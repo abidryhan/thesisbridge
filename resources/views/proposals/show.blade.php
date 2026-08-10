@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ $proposal->title }}
+            Your Proposal
         </h2>
     </x-slot>
 
@@ -21,6 +21,11 @@
             &middot;
             Supervisor: {{ $proposal->thesisGroup->supervisor->user->name ?? 'Not assigned yet' }}
         </p>
+
+        <div class="mb-6">
+            <h3 class="font-semibold mb-1">Title</h3>
+            <p>{{ $proposal->title }}</p>
+        </div>
 
         <div class="mb-6">
             <h3 class="font-semibold mb-1">Abstract</h3>
