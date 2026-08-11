@@ -65,17 +65,21 @@
             </div>
 
             @forelse ($group->milestones as $milestone)
-                <div class="border rounded p-4 mb-3">
-                    <div class="flex justify-between items-start">
-                        <h4 class="font-semibold text-gray-800">{{ $milestone->title }}</h4>
-                        <span class="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded">{{ $milestone->deliverable_type }}</span>
-                    </div>
-                    <p class="text-sm text-gray-600 mt-1">{{ $milestone->description }}</p>
-                    <p class="text-xs text-gray-400 mt-2">Deadline: {{ $milestone->deadline->format('M d, Y') }}</p>
-                </div>
-            @empty
-                <p class="text-gray-500 text-sm">No milestones created yet.</p>
-            @endforelse
+    <div class="border rounded p-4 mb-3">
+        <div class="flex justify-between items-start">
+            <h4 class="font-semibold text-gray-800">{{ $milestone->title }}</h4>
+            <span class="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded">{{ $milestone->deliverable_type }}</span>
+        </div>
+        <p class="text-sm text-gray-600 mt-1">{{ $milestone->description }}</p>
+        <p class="text-xs text-gray-400 mt-2">Deadline: {{ $milestone->deadline->format('M d, Y') }}</p>
+        <a href="{{ route('thesis-groups.milestones.documents.index', [$group, $milestone]) }}" class="text-blue-600 text-sm underline mt-2 inline-block">
+            View Documents ({{ $milestone->documents_count }})
+        </a>
+    </div>
+@empty
+    <p class="text-gray-500 text-sm">No milestones created yet.</p>
+@endforelse
+
         </div>
 
         <div class="mt-6 flex gap-3">
