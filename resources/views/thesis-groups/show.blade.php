@@ -72,6 +72,9 @@
                     </div>
                     <p class="text-sm text-gray-600 mt-1">{{ $milestone->description }}</p>
                     <p class="text-xs text-gray-400 mt-2">Deadline: {{ $milestone->deadline->format('M d, Y') }}</p>
+                    <a href="{{ route('thesis-groups.milestones.documents.index', [$group, $milestone]) }}" class="text-blue-600 text-sm underline mt-2 inline-block">
+                        View Documents ({{ $milestone->documents_count }})
+                    </a>
                 </div>
             @empty
                 <p class="text-gray-500 text-sm">No milestones created yet.</p>
