@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ThesisGroup extends Model
 {
@@ -27,5 +28,15 @@ class ThesisGroup extends Model
     public function proposal(): HasOne
     {
         return $this->hasOne(Proposal::class);
+    }
+
+    public function milestones(): HasMany
+    {
+        return $this->hasMany(Milestone::class);
+    }
+
+    public function isSupervisedBy(Supervisor $supervisor): bool
+    {
+        return $this->supervisor_id === $supervisor->id;
     }
 }
