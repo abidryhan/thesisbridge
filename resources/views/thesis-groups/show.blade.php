@@ -54,6 +54,30 @@
             </div>
         </div>
 
+        <div class="bg-white shadow rounded-lg p-6 mt-6">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-medium text-gray-700">Milestones ({{ $group->milestones->count() }})</span>
+                @if ($isSupervisor)
+                    <a href="{{ route('thesis-groups.milestones.create', $group) }}" class="bg-blue-600 text-white px-3 py-1.5 rounded text-sm">
+                        + Add Milestone
+                    </a>
+                @endif
+            </div>
+
+            @forelse ($group->milestones as $milestone)
+                <div class="border rounded p-4 mb-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-semibold text-gray-800">{{ $milestone->title }}</h4>
+                        <span class="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded">{{ $milestone->deliverable_type }}</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-1">{{ $milestone->description }}</p>
+                    <p class="text-xs text-gray-400 mt-2">Deadline: {{ $milestone->deadline->format('M d, Y') }}</p>
+                </div>
+            @empty
+                <p class="text-gray-500 text-sm">No milestones created yet.</p>
+            @endforelse
+        </div>
+
         <div class="mt-6 flex gap-3">
             <a href="{{ route('thesis-groups.edit', $group) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Edit</a>
 

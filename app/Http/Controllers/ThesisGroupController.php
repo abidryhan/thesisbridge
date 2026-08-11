@@ -79,11 +79,18 @@ class ThesisGroupController extends Controller
     }
 
     public function show(ThesisGroup $thesis_group): View
-    {
-        $thesis_group->load(['students', 'supervisor']);
+{
+    $thesis_group->load(['students', 'supervisor', 'milestones']);
 
-        return view('thesis-groups.show', ['group' => $thesis_group]);
-    }
+    $currentSupervisor = auth()->user()->supervisor;
+    $isSupervisor = $currentSupervisor && $thesis_group->isSupervisedBy($currentSupervisor);
+
+    return view('thesis-groups.show', [
+        'group' => $thesis_group,
+        'isSupervisor' => $isSupervisor,
+    ]);
+}
+
 
     public function edit(ThesisGroup $thesis_group): View
     {
