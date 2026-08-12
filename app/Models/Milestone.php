@@ -29,4 +29,9 @@ class Milestone extends Model
     {
         return $this->hasMany(Document::class);
     }
+
+    public function meetings(): HasMany
+    {
+        return $this->hasMany(Meeting::class);
+    }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CourseProjectController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalController;
@@ -34,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('proposals', ProposalController::class)->only(['create', 'store', 'show']);
     Route::resource('thesis-groups.milestones', MilestoneController::class)->only(['create', 'store']);
     Route::resource('thesis-groups.milestones.documents', DocumentController::class)->only(['index', 'create', 'store']);
+    Route::resource('thesis-groups.meetings', MeetingController::class)->only(['index', 'create', 'store']);
 });
 
 Route::resource('course-projects', CourseProjectController::class)->only(['show']);

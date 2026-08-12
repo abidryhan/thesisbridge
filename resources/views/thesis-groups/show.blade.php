@@ -81,6 +81,15 @@
             @endforelse
         </div>
 
+        <div class="bg-white shadow rounded-lg p-6 mt-6">
+            <div class="flex justify-between items-center">
+                <span class="font-medium text-gray-700">Meeting Log</span>
+                <a href="{{ route('thesis-groups.meetings.index', $group) }}" class="text-blue-600 text-sm underline">
+                    View Meetings
+                </a>
+            </div>
+        </div>
+
         <div class="mt-6 flex gap-3">
             <a href="{{ route('thesis-groups.edit', $group) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Edit</a>
 

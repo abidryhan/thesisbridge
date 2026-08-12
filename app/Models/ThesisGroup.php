@@ -39,4 +39,22 @@ class ThesisGroup extends Model
     {
         return $this->supervisor_id === $supervisor->id;
     }
+
+    public function meetings(): HasMany
+    {
+        return $this->hasMany(Meeting::class);
+    }
+
+    public function isAccessibleBy(User $user): bool
+    {
+        if ($user->supervisor && $this->isSupervisedBy($user->supervisor)) {
+            return true;
+        }
+
+        if ($user->student && $this->students->contains('id', $user->student->id)) {
+            return true;
+        }
+
+        return false;
+    }
 }
