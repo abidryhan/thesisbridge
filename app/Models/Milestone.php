@@ -34,4 +34,9 @@ class Milestone extends Model
     {
         return $this->hasMany(Meeting::class);
     }
+
+    public function feedback(): HasMany
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }
