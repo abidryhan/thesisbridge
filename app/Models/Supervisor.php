@@ -12,6 +12,9 @@ class Supervisor extends Model
         'designation',
         'research_areas',
         'max_capacity',
+    ];   
+     protected $casts = [
+        'research_areas' => 'array',
     ];
 
     public function user(): BelongsTo
