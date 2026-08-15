@@ -6,6 +6,13 @@
     </x-slot>
 
     <div class="max-w-2xl mx-auto py-8 px-4">
+        @if (session('success'))
+            <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">{{ session('success') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">{{ session('error') }}</div>
+        @endif
+
         <a href="{{ route('thesis-groups.show', $group) }}" class="text-blue-600 underline text-sm mb-6 inline-block">
             ← Back to Group
         </a>
@@ -33,6 +40,19 @@
                     <p class="text-xs text-gray-400 mt-2">
                         Capacity: {{ $supervisor->currentLoad() }} / {{ $supervisor->max_capacity }}
                     </p>
+
+                    @if ($group->supervisor_id === $supervisor->id)
+                        <span class="text-green-700 text-sm font-medium mt-2 inline-block">✓ Currently Assigned</span>
+                    @else
+                        <form method="POST" action="{{ route('thesis-groups.choose-supervisor', $group) }}" class="mt-2">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="supervisor_id" value="{{ $supervisor->id }}">
+                            <button type="submit" class="bg-blue-600 text-white text-sm px-3 py-1 rounded">
+                                Choose This Supervisor
+                            </button>
+                        </form>
+                    @endif
                 </div>
             @endforeach
         @endif

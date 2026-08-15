@@ -39,6 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('thesis-groups.milestones.documents', DocumentController::class)->only(['index', 'create', 'store']);
     Route::resource('thesis-groups.meetings', MeetingController::class)->only(['index', 'create', 'store']);
     Route::resource('thesis-groups.milestones.feedback', FeedbackController::class)->only(['index', 'create', 'store']);
+    Route::patch('thesis-groups/{thesis_group}/supervisor', [ThesisGroupController::class, 'chooseSupervisor'])
+        ->name('thesis-groups.choose-supervisor');
 
     Route::get('thesis-groups/{thesis_group}/supervisor-matches', [SupervisorMatchController::class, 'index'])
         ->name('thesis-groups.supervisor-matches');
