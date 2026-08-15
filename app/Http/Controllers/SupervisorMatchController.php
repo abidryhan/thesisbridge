@@ -2,43 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ThesisGroup;
 use App\Models\Supervisor;
-use Illuminate\Http\RedirectResponse;
+use App\Models\ThesisGroup;
 use Illuminate\View\View;
 
 class SupervisorMatchController extends Controller
 {
-    public function index(ThesisGroup $thesis_group): View|RedirectResponse
+    public function index(ThesisGroup $thesis_group): View
     {
-        $proposal = $thesis_group->proposal;
-
-        if (!$proposal) {
-            return redirect()
-                ->route('thesis-groups.show', $thesis_group)
-                ->with('error', 'Submit a proposal first to see supervisor matches.');
+        if (!$thesis_group->isAccessibleBy(auth()->user())) {
+            abort(403);
         }
 
-        $supervisors = Supervisor::all();
+        $proposal = $thesis_group->proposal;
 
-        $rankedSupervisors = $supervisors
-            ->map(function ($supervisor) use ($proposal) {
-                $proposalTags = $proposal->research_tags ?? [];
-                $supervisorAreas = $supervisor->research_areas ?? [];
+        if (!$proposal || empty($proposal->research_tags)) {
+            return view('supervisor-matches.index', [
+                'group' => $thesis_group,
+                'noTags' => true,
+                'supervisors' => collect(),
+            ]);
+        }
 
-                $matchCount = count(array_intersect($proposalTags, $supervisorAreas));
-
-                return [
-                    'supervisor' => $supervisor,
-                    'matchCount' => $matchCount,
-                ];
+        $supervisors = Supervisor::with('user')
+            ->get()
+            ->reject(fn (Supervisor $supervisor) => $supervisor->currentLoad() >= $supervisor->max_capacity)
+            ->map(function (Supervisor $supervisor) use ($thesis_group) {
+                $supervisor->score = $supervisor->compatibilityScoreWith($thesis_group);
+                return $supervisor;
             })
-            ->sortByDesc('matchCount');
+            ->sortByDesc('score')
+            ->values();
 
         return view('supervisor-matches.index', [
             'group' => $thesis_group,
-            'proposal' => $proposal,
-            'matches' => $rankedSupervisors,
+            'noTags' => false,
+            'supervisors' => $supervisors,
         ]);
     }
 }
