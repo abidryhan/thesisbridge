@@ -55,6 +55,16 @@
         </div>
 
         <div class="bg-white shadow rounded-lg p-6 mt-6">
+            <div class="flex justify-between items-center">
+                <span class="font-medium text-gray-700">Supervisor Matching</span>
+                <a href="{{ route('thesis-groups.supervisor-matches', $group) }}" class="text-blue-600 text-sm underline">
+                    Browse Recommended Supervisors
+                </a>
+            </div>
+        </div>
+
+
+        <div class="bg-white shadow rounded-lg p-6 mt-6">
             <div class="flex justify-between items-center mb-4">
                 <span class="font-medium text-gray-700">Milestones ({{ $group->milestones->count() }})</span>
                 @if ($isSupervisor)

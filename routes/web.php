@@ -8,8 +8,8 @@ use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\StudentController;
-use App\Http\Controllers\SupervisorMatchController;
 use App\Http\Controllers\SupervisorController;
+use App\Http\Controllers\SupervisorMatchController;
 use App\Http\Controllers\ThesisGroupController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,8 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('thesis-groups.milestones.documents', DocumentController::class)->only(['index', 'create', 'store']);
     Route::resource('thesis-groups.meetings', MeetingController::class)->only(['index', 'create', 'store']);
     Route::resource('thesis-groups.milestones.feedback', FeedbackController::class)->only(['index', 'create', 'store']);
-    Route::get('thesis-groups/{thesis_group}/matches', [SupervisorMatchController::class, 'index'])
-        ->name('thesis-groups.matches');
+
+    Route::get('thesis-groups/{thesis_group}/supervisor-matches', [SupervisorMatchController::class, 'index'])
+        ->name('thesis-groups.supervisor-matches');
 });
 
 Route::resource('course-projects', CourseProjectController::class)->only(['show']);

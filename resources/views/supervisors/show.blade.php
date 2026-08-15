@@ -13,7 +13,11 @@
         @endif
 
         <div class="mb-3"><span class="font-medium">Designation:</span> {{ $supervisor->designation }}</div>
-        <div class="mb-3"><span class="font-medium">Research Areas:</span> {{ $supervisor->research_areas }}</div>
+        <div class="mb-3">
+            <span class="font-medium">Research Areas:</span>
+            {{ implode(', ', $supervisor->research_areas) }}
+        </div>
+
         <div class="mb-3"><span class="font-medium">Max Capacity:</span> {{ $supervisor->max_capacity }} thesis group(s)</div>
 
         <div class="mt-6 flex gap-3">

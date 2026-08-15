@@ -37,6 +37,15 @@
                 @error('methodology')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
             </div>
 
+            <div class="mb-4">
+                <label for="research_tags" class="block font-medium mb-1">Research Tags (optional, comma-separated)</label>
+                <input type="text" name="research_tags" id="research_tags" value="{{ old('research_tags') }}"
+                    class="w-full border rounded px-3 py-2" placeholder="Machine Learning, NLP">
+                <p class="text-gray-500 text-sm mt-1">Helps match your group with the most relevant supervisors.</p>
+                @error('research_tags')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+            </div>
+
+
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Submit Proposal</button>
         </form>
     </div>

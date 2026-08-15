@@ -1,86 +1,40 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Recommended Supervisors — {{ $group->group_name }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="max-w-5xl mx-auto py-8 px-4">
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">Supervisor Matches</h1>
-        <p class="text-gray-600 mt-2">
-            Recommended supervisors for <span class="font-semibold">{{ $group->group_name }}</span>
-        </p>
-    </div>
+    <div class="max-w-2xl mx-auto py-8 px-4">
+        <a href="{{ route('thesis-groups.show', $group) }}" class="text-blue-600 underline text-sm mb-6 inline-block">
+            ← Back to Group
+        </a>
 
-    <div class="bg-white shadow rounded-lg p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-3">Proposal</h2>
-        <p class="text-gray-700 mb-4">{{ $proposal->title }}</p>
-
-        <div class="flex flex-wrap gap-2">
-            @forelse($proposal->research_tags ?? [] as $tag)
-                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
-                    {{ $tag }}
-                </span>
-            @empty
-                <span class="text-gray-500 text-sm">No research tags provided.</span>
-            @endforelse
-        </div>
-    </div>
-
-    @if($matches->isEmpty())
-        <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg">
-            No supervisor matches found.
-        </div>
-    @else
-        <div class="space-y-4">
-            @foreach($matches as $match)
-                @php
-                    $supervisor = $match['supervisor'];
-                    $areas = $supervisor->research_areas ?? [];
-                    $remaining = max(0, $supervisor->max_capacity - ($supervisor->current_students ?? 0));
-                @endphp
-
-                <div class="bg-white shadow rounded-lg p-6">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900">
-                                {{ $supervisor->user->name ?? 'Supervisor' }}
-                            </h3>
-
-                            <p class="text-sm text-gray-600 mt-1">
-                                Capacity: {{ $supervisor->current_students ?? 0 }} / {{ $supervisor->max_capacity }}
-                                ({{ $remaining }} remaining)
-                            </p>
-                        </div>
-
-                        <div class="text-right">
-                            <div class="text-2xl font-bold text-green-600">
-                                {{ $match['matchCount'] }}
-                            </div>
-                            <div class="text-sm text-gray-500">matching tags</div>
-                        </div>
+        @if ($noTags)
+            <div class="bg-yellow-100 text-yellow-800 px-4 py-3 rounded">
+                Your group's proposal doesn't have any research tags set yet, so compatibility scores
+                can't be computed. Add some research tags on your proposal to see recommended supervisors.
+            </div>
+        @elseif ($supervisors->isEmpty())
+            <p class="text-gray-500">No supervisors currently have available capacity.</p>
+        @else
+            @foreach ($supervisors as $supervisor)
+                <div class="border rounded p-4 mb-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-semibold text-gray-800">{{ $supervisor->user->name ?? 'Unknown' }}</h4>
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-medium">
+                            {{ $supervisor->score }}% match
+                        </span>
                     </div>
-
-                    <div class="mt-4">
-                        <h4 class="text-sm font-medium text-gray-700 mb-2">Research Areas</h4>
-
-                        <div class="flex flex-wrap gap-2">
-                            @forelse($areas as $area)
-                                <span class="px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full">
-                                    {{ $area }}
-                                </span>
-                            @empty
-                                <span class="text-gray-500 text-sm">No research areas listed.</span>
-                            @endforelse
-                        </div>
-                    </div>
+                    <p class="text-sm text-gray-600 mt-1">{{ $supervisor->designation }}</p>
+                    <p class="text-sm text-gray-500 mt-2">
+                        Research areas: {{ implode(', ', $supervisor->research_areas) }}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-2">
+                        Capacity: {{ $supervisor->currentLoad() }} / {{ $supervisor->max_capacity }}
+                    </p>
                 </div>
             @endforeach
-        </div>
-    @endif
-
-    <div class="mt-8">
-        <a href="{{ route('thesis-groups.show', $group) }}"
-           class="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700">
-            ← Back to Thesis Group
-        </a>
+        @endif
     </div>
-</div>
-@endsection
+</x-app-layout>
