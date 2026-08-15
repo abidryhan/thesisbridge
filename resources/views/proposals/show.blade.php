@@ -22,6 +22,14 @@
             Supervisor: {{ $proposal->thesisGroup->supervisor->user->name ?? 'Not assigned yet' }}
         </p>
 
+        @if (!empty($proposal->research_tags))
+            <div class="mb-6">
+                <h3 class="font-semibold mb-1">Research Tags</h3>
+                <p>{{ implode(', ', $proposal->research_tags) }}</p>
+            </div>
+        @endif
+
+
         <div class="mb-6">
             <h3 class="font-semibold mb-1">Title</h3>
             <p>{{ $proposal->title }}</p>

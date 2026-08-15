@@ -29,6 +29,9 @@ class SupervisorController extends Controller
             'max_capacity' => 'required|integer|min:1|max:10',
         ]);
 
+        $validated['research_areas'] = array_values(array_filter(
+            array_map('trim', explode(',', $validated['research_areas']))
+        ));
         $validated['user_id'] = auth()->id();
 
         $supervisor = Supervisor::create($validated);
@@ -55,11 +58,16 @@ class SupervisorController extends Controller
             'max_capacity' => 'required|integer|min:1|max:10',
         ]);
 
+        $validated['research_areas'] = array_values(array_filter(
+            array_map('trim', explode(',', $validated['research_areas']))
+        ));
+
         $supervisor->update($validated);
 
         return redirect()->route('supervisors.show', $supervisor)
             ->with('success', 'Profile updated successfully.');
     }
+
 
     public function destroy(Supervisor $supervisor): RedirectResponse
     {

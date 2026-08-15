@@ -14,6 +14,10 @@ class Proposal extends Model
         'objectives',
         'methodology',
         'status',
+        'research_tags',
+    ];
+     protected $casts = [
+        'research_tags' => 'array',
     ];
 
     public function thesisGroup(): BelongsTo

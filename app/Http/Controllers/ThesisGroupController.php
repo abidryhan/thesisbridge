@@ -122,6 +122,17 @@ class ThesisGroupController extends Controller
             'student_ids.*' => 'exists:students,id',
         ]);
 
+        if (!empty($validated['supervisor_id'])) {
+            $supervisor = Supervisor::find($validated['supervisor_id']);
+            $isChangingSupervisor = $thesis_group->supervisor_id !== $supervisor->id;
+
+            if ($isChangingSupervisor && $supervisor->currentLoad() >= $supervisor->max_capacity) {
+                return back()
+                    ->withErrors(['supervisor_id' => 'This supervisor is at full capacity.'])
+                    ->withInput();
+            }
+        }
+
         $thesis_group->update([
             'group_name' => $validated['group_name'],
             'supervisor_id' => $validated['supervisor_id'] ?? null,
@@ -139,5 +150,36 @@ class ThesisGroupController extends Controller
 
         return redirect()->route('thesis-groups.index')
             ->with('success', 'Thesis group deleted.');
+    }
+
+    public function chooseSupervisor(Request $request, ThesisGroup $thesis_group): RedirectResponse
+    {
+        $this->authorizeMember($thesis_group);
+
+        $validated = $request->validate([
+            'supervisor_id' => 'required|exists:supervisors,id',
+        ]);
+
+        $supervisor = Supervisor::findOrFail($validated['supervisor_id']);
+        $isChangingSupervisor = $thesis_group->supervisor_id !== $supervisor->id;
+
+        if ($isChangingSupervisor && $supervisor->currentLoad() >= $supervisor->max_capacity) {
+            return back()->with('error', 'This supervisor is at full capacity — someone may have just taken the last spot.');
+        }
+
+        $thesis_group->update(['supervisor_id' => $supervisor->id]);
+
+        return redirect()->route('thesis-groups.show', $thesis_group)
+            ->with('success', "Supervisor set to {$supervisor->user->name}.");
+    }
+
+    protected function authorizeMember(ThesisGroup $thesis_group): void
+    {
+        $student = auth()->user()->student;
+        $isMember = $student && $thesis_group->students->contains('id', $student->id);
+
+        if (!$isMember) {
+            abort(403);
+        }
     }
 }

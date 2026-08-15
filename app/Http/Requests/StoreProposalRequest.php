@@ -29,8 +29,10 @@ class StoreProposalRequest extends FormRequest
             'abstract' => 'required|string',
             'objectives' => 'required|string',
             'methodology' => 'required|string',
+            'research_tags' => 'nullable|string',
         ];
     }
+
 
     public function withValidator(Validator $validator): void
     {
