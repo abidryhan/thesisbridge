@@ -12,6 +12,7 @@ class MilestoneController extends Controller
     public function create(ThesisGroup $thesis_group): View
     {
         $this->authorizeSupervisor($thesis_group);
+        $this->authorizeApproved($thesis_group);
 
         return view('milestones.create', ['group' => $thesis_group]);
     }
@@ -19,6 +20,7 @@ class MilestoneController extends Controller
     public function store(Request $request, ThesisGroup $thesis_group): RedirectResponse
     {
         $this->authorizeSupervisor($thesis_group);
+        $this->authorizeApproved($thesis_group);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -38,6 +40,13 @@ class MilestoneController extends Controller
         $supervisor = auth()->user()->supervisor;
 
         if (!$supervisor || !$thesis_group->isSupervisedBy($supervisor)) {
+            abort(403);
+        }
+    }
+
+    protected function authorizeApproved(ThesisGroup $thesis_group): void
+    {
+        if (!$thesis_group->proposal || $thesis_group->proposal->status !== 'approved') {
             abort(403);
         }
     }
