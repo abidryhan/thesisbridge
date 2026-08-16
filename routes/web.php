@@ -41,6 +41,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('thesis-groups.milestones.feedback', FeedbackController::class)->only(['index', 'create', 'store']);
     Route::patch('thesis-groups/{thesis_group}/supervisor', [ThesisGroupController::class, 'chooseSupervisor'])
         ->name('thesis-groups.choose-supervisor');
+    Route::post('/proposals/{proposal}/resubmit', [ProposalController::class, 'resubmit'])->name('proposals.resubmit');
+    Route::post('/proposals/{proposal}/start-review', [ProposalController::class, 'startReview'])->name('proposals.start-review');
+    Route::post('/proposals/{proposal}/approve', [ProposalController::class, 'approve'])->name('proposals.approve');
+    Route::post('/proposals/{proposal}/request-revision', [ProposalController::class, 'requestRevision'])->name('proposals.request-revision');
+    Route::post('/proposals/{proposal}/reject', [ProposalController::class, 'reject'])->name('proposals.reject');   
 
     Route::get('thesis-groups/{thesis_group}/supervisor-matches', [SupervisorMatchController::class, 'index'])
         ->name('thesis-groups.supervisor-matches');
