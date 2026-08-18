@@ -16,6 +16,7 @@ class Proposal extends Model
         'objectives',
         'methodology',
         'status',
+        'research_tags',
     ];
 
     protected const TRANSITIONS = [
@@ -30,6 +31,11 @@ class Proposal extends Model
     {
         return $this->belongsTo(ThesisGroup::class);
     }
+
+    protected $casts = [
+        'research_tags' => 'array',
+    ];
+
 
     public function statusHistory(): HasMany
     {

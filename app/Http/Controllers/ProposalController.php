@@ -32,8 +32,13 @@ class ProposalController extends Controller
     {
         $group = auth()->user()->student->thesisGroups->first();
 
+        $validated = $request->validated();
+        $validated['research_tags'] = !empty($validated['research_tags'])
+            ? array_values(array_filter(array_map('trim', explode(',', $validated['research_tags']))))
+            : [];
+
         $proposal = Proposal::create([
-            ...$request->validated(),
+            ...$validated,
             'thesis_group_id' => $group->id,
         ]);
 

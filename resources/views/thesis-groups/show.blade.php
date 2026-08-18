@@ -81,6 +81,21 @@
         </div>
 
         <div class="bg-white shadow rounded-lg p-6 mt-6">
+            <div class="flex justify-between items-center">
+                <span class="font-medium text-gray-700">Thesis Proposal</span>
+                @if ($group->proposal)
+                    <a href="{{ route('proposals.show', $group->proposal) }}" class="text-blue-600 text-sm underline">
+                        View Proposal
+                    </a>
+                @else
+                    <a href="{{ route('proposals.create') }}" class="text-blue-600 text-sm underline">
+                        Submit Proposal
+                    </a>
+                @endif
+            </div>
+        </div>
+
+        <div class="bg-white shadow rounded-lg p-6 mt-6">
             <div class="flex justify-between items-center mb-4">
                 <span class="font-medium text-gray-700">
                     Milestones ({{ $group->milestones->count() }})
@@ -136,6 +151,8 @@
                 </p>
             @endforelse
         </div>
+
+
 
         <div class="bg-white shadow rounded-lg p-6 mt-6">
             <div class="flex justify-between items-center">
