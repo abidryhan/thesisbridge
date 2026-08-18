@@ -87,13 +87,11 @@
                 </span>
 
                 @if ($isSupervisor && $group->proposal && $group->proposal->status === 'approved')
-                    <a
-                        href="{{ route('thesis-groups.milestones.create', $group) }}"
-                        class="bg-blue-600 text-white px-3 py-1.5 rounded text-sm"
-                    >
-                        + Add Milestone
+                    <a href="{{ route('thesis-groups.milestones.create', $group) }}" class="bg-blue-600 text-white px-4 py-2 rounded">
+                        Add Milestone
                     </a>
                 @endif
+
             </div>
 
             @forelse ($group->milestones as $milestone)

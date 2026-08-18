@@ -34,21 +34,22 @@ Route::middleware('auth')->group(function () {
     Route::resource('supervisors', SupervisorController::class)->except(['index']);
     Route::resource('course-projects', CourseProjectController::class)->except(['index', 'show']);
     Route::resource('thesis-groups', ThesisGroupController::class);
-    Route::resource('proposals', ProposalController::class)->only(['create', 'store', 'show']);
+    Route::resource('proposals', ProposalController::class)->only(['create', 'store', 'show', 'edit', 'update']);
     Route::resource('thesis-groups.milestones', MilestoneController::class)->only(['create', 'store']);
     Route::resource('thesis-groups.milestones.documents', DocumentController::class)->only(['index', 'create', 'store']);
     Route::resource('thesis-groups.meetings', MeetingController::class)->only(['index', 'create', 'store']);
     Route::resource('thesis-groups.milestones.feedback', FeedbackController::class)->only(['index', 'create', 'store']);
-    Route::patch('thesis-groups/{thesis_group}/supervisor', [ThesisGroupController::class, 'chooseSupervisor'])
-        ->name('thesis-groups.choose-supervisor');
-    Route::post('/proposals/{proposal}/resubmit', [ProposalController::class, 'resubmit'])->name('proposals.resubmit');
-    Route::post('/proposals/{proposal}/start-review', [ProposalController::class, 'startReview'])->name('proposals.start-review');
-    Route::post('/proposals/{proposal}/approve', [ProposalController::class, 'approve'])->name('proposals.approve');
-    Route::post('/proposals/{proposal}/request-revision', [ProposalController::class, 'requestRevision'])->name('proposals.request-revision');
-    Route::post('/proposals/{proposal}/reject', [ProposalController::class, 'reject'])->name('proposals.reject');   
 
     Route::get('thesis-groups/{thesis_group}/supervisor-matches', [SupervisorMatchController::class, 'index'])
         ->name('thesis-groups.supervisor-matches');
+    Route::patch('thesis-groups/{thesis_group}/supervisor', [ThesisGroupController::class, 'chooseSupervisor'])
+        ->name('thesis-groups.choose-supervisor');
+
+    Route::post('proposals/{proposal}/resubmit', [ProposalController::class, 'resubmit'])->name('proposals.resubmit');
+    Route::patch('proposals/{proposal}/start-review', [ProposalController::class, 'startReview'])->name('proposals.start-review');
+    Route::patch('proposals/{proposal}/approve', [ProposalController::class, 'approve'])->name('proposals.approve');
+    Route::patch('proposals/{proposal}/request-revision', [ProposalController::class, 'requestRevision'])->name('proposals.request-revision');
+    Route::patch('proposals/{proposal}/reject', [ProposalController::class, 'reject'])->name('proposals.reject');
 });
 
 Route::resource('course-projects', CourseProjectController::class)->only(['show']);

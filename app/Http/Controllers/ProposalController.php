@@ -52,11 +52,8 @@ class ProposalController extends Controller
         $currentStudent = auth()->user()->student;
         $currentSupervisor = auth()->user()->supervisor;
 
-        $isMember = $currentStudent
-            && $proposal->thesisGroup->students->contains('id', $currentStudent->id);
-
-        $isAssignedSupervisor = $currentSupervisor
-            && $proposal->thesisGroup->isSupervisedBy($currentSupervisor);
+        $isMember = $currentStudent && $proposal->thesisGroup->students->contains('id', $currentStudent->id);
+        $isAssignedSupervisor = $currentSupervisor && $proposal->thesisGroup->isSupervisedBy($currentSupervisor);
 
         if (!$isMember && !$isAssignedSupervisor) {
             abort(403);
@@ -115,11 +112,7 @@ class ProposalController extends Controller
         $this->authorizeSupervisor($proposal);
 
         try {
-            $proposal->transitionTo(
-                'under_review',
-                request('reason'),
-                auth()->user()
-            );
+            $proposal->transitionTo('under_review', request('reason'), auth()->user());
         } catch (\InvalidArgumentException $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -133,11 +126,7 @@ class ProposalController extends Controller
         $this->authorizeSupervisor($proposal);
 
         try {
-            $proposal->transitionTo(
-                'approved',
-                request('reason'),
-                auth()->user()
-            );
+            $proposal->transitionTo('approved', request('reason'), auth()->user());
         } catch (\InvalidArgumentException $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -146,22 +135,14 @@ class ProposalController extends Controller
             ->with('success', 'Proposal approved.');
     }
 
-    public function requestRevision(
-        Request $request,
-        Proposal $proposal
-    ): RedirectResponse {
+    public function requestRevision(Request $request, Proposal $proposal): RedirectResponse
+    {
         $this->authorizeSupervisor($proposal);
 
-        $validated = $request->validate([
-            'reason' => 'required|string',
-        ]);
+        $validated = $request->validate(['reason' => 'required|string']);
 
         try {
-            $proposal->transitionTo(
-                'revision_required',
-                $validated['reason'],
-                auth()->user()
-            );
+            $proposal->transitionTo('revision_required', $validated['reason'], auth()->user());
         } catch (\InvalidArgumentException $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -170,22 +151,14 @@ class ProposalController extends Controller
             ->with('success', 'Revision requested.');
     }
 
-    public function reject(
-        Request $request,
-        Proposal $proposal
-    ): RedirectResponse {
+    public function reject(Request $request, Proposal $proposal): RedirectResponse
+    {
         $this->authorizeSupervisor($proposal);
 
-        $validated = $request->validate([
-            'reason' => 'required|string',
-        ]);
+        $validated = $request->validate(['reason' => 'required|string']);
 
         try {
-            $proposal->transitionTo(
-                'rejected',
-                $validated['reason'],
-                auth()->user()
-            );
+            $proposal->transitionTo('rejected', $validated['reason'], auth()->user());
         } catch (\InvalidArgumentException $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -197,9 +170,7 @@ class ProposalController extends Controller
     protected function authorizeGroupMember(Proposal $proposal): void
     {
         $student = auth()->user()->student;
-
-        $inGroup = $student
-            && $proposal->thesisGroup->students->contains('id', $student->id);
+        $inGroup = $student && $proposal->thesisGroup->students->contains('id', $student->id);
 
         if (!$inGroup) {
             abort(403);
@@ -208,11 +179,7 @@ class ProposalController extends Controller
 
     protected function authorizeEditable(Proposal $proposal): void
     {
-        if (!in_array(
-            $proposal->status,
-            ['revision_required', 'rejected'],
-            true
-        )) {
+        if (!in_array($proposal->status, ['revision_required', 'rejected'], true)) {
             abort(403);
         }
     }
@@ -221,10 +188,7 @@ class ProposalController extends Controller
     {
         $supervisor = auth()->user()->supervisor;
 
-        if (
-            !$supervisor
-            || !$proposal->thesisGroup->isSupervisedBy($supervisor)
-        ) {
+        if (!$supervisor || !$proposal->thesisGroup->isSupervisedBy($supervisor)) {
             abort(403);
         }
     }

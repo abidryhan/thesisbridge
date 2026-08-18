@@ -35,6 +35,8 @@ class MilestoneController extends Controller
             ->with('success', 'Milestone created successfully.');
     }
 
+
+
     protected function authorizeSupervisor(ThesisGroup $thesis_group): void
     {
         $supervisor = auth()->user()->supervisor;

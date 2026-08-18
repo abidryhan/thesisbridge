@@ -9,7 +9,6 @@
         @if (session('success'))
             <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">{{ session('success') }}</div>
         @endif
-
         @if (session('error'))
             <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">{{ session('error') }}</div>
         @endif
@@ -32,12 +31,10 @@
             <h3 class="font-semibold mb-1">Abstract</h3>
             <p class="text-gray-700">{{ $proposal->abstract }}</p>
         </div>
-
         <div class="mb-6">
             <h3 class="font-semibold mb-1">Objectives</h3>
             <p class="text-gray-700">{{ $proposal->objectives }}</p>
         </div>
-
         <div class="mb-6">
             <h3 class="font-semibold mb-1">Methodology</h3>
             <p class="text-gray-700">{{ $proposal->methodology }}</p>
@@ -59,9 +56,7 @@
                     <form method="POST" action="{{ route('proposals.start-review', $proposal) }}" class="mb-3">
                         @csrf
                         @method('PATCH')
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
-                            Move to Under Review
-                        </button>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Move to Under Review</button>
                     </form>
                 @endif
 
@@ -69,9 +64,7 @@
                     <form method="POST" action="{{ route('proposals.approve', $proposal) }}" class="mb-3">
                         @csrf
                         @method('PATCH')
-                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">
-                            Approve
-                        </button>
+                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Approve</button>
                     </form>
                 @endif
 
@@ -79,17 +72,9 @@
                     <form method="POST" action="{{ route('proposals.request-revision', $proposal) }}" class="mb-3">
                         @csrf
                         @method('PATCH')
-                        <textarea
-                            name="reason"
-                            rows="2"
-                            required
-                            placeholder="Explain what needs revision (required)"
-                            class="w-full border rounded px-3 py-2 mb-2"
-                        ></textarea>
-
-                        <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded">
-                            Request Revision
-                        </button>
+                        <textarea name="reason" rows="2" required placeholder="Explain what needs revision (required)"
+                            class="w-full border rounded px-3 py-2 mb-2"></textarea>
+                        <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded">Request Revision</button>
                     </form>
                 @endif
 
@@ -97,17 +82,9 @@
                     <form method="POST" action="{{ route('proposals.reject', $proposal) }}">
                         @csrf
                         @method('PATCH')
-                        <textarea
-                            name="reason"
-                            rows="2"
-                            required
-                            placeholder="Explain the reason for rejection (required)"
-                            class="w-full border rounded px-3 py-2 mb-2"
-                        ></textarea>
-
-                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">
-                            Reject
-                        </button>
+                        <textarea name="reason" rows="2" required placeholder="Explain the reason for rejection (required)"
+                            class="w-full border rounded px-3 py-2 mb-2"></textarea>
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Reject</button>
                     </form>
                 @endif
             </div>
@@ -116,18 +93,12 @@
         {{-- Student-facing edit/resubmit --}}
         @if ($isMember && in_array($proposal->status, ['revision_required', 'rejected']))
             <div class="border rounded p-4 mb-6 bg-gray-50">
-                <a
-                    href="{{ route('proposals.edit', $proposal) }}"
-                    class="bg-blue-600 text-white px-4 py-2 rounded inline-block mb-3"
-                >
+                <a href="{{ route('proposals.edit', $proposal) }}" class="bg-blue-600 text-white px-4 py-2 rounded inline-block mb-3">
                     Edit Proposal
                 </a>
-
                 <form method="POST" action="{{ route('proposals.resubmit', $proposal) }}">
                     @csrf
-                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">
-                        Resubmit for Review
-                    </button>
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Resubmit for Review</button>
                 </form>
             </div>
         @endif
@@ -135,21 +106,15 @@
         {{-- Status history timeline --}}
         <div>
             <h3 class="font-semibold mb-2">Status History</h3>
-
             @forelse ($proposal->statusHistory as $entry)
                 <div class="border-l-2 border-gray-300 pl-3 mb-3">
-                    <p class="text-sm font-medium">
-                        {{ ucfirst(str_replace('_', ' ', $entry->status)) }}
-                    </p>
-
+                    <p class="text-sm font-medium">{{ ucfirst(str_replace('_', ' ', $entry->status)) }}</p>
                     @if ($entry->reason)
                         <p class="text-sm text-gray-600">{{ $entry->reason }}</p>
                     @endif
-
                     <p class="text-xs text-gray-400">
                         {{ $entry->changedBy->name ?? 'A user who has since been removed' }}
-                        &middot;
-                        {{ $entry->created_at->format('M d, Y g:i A') }}
+                        &middot; {{ $entry->created_at->format('M d, Y g:i A') }}
                     </p>
                 </div>
             @empty
