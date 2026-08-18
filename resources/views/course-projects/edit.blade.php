@@ -27,15 +27,29 @@
             <div class="mb-4">
                 <label for="tech_stack" class="block font-medium mb-1">Tech Stack (comma-separated)</label>
                 <input type="text" name="tech_stack" id="tech_stack"
-                    value="{{ old('tech_stack', implode(', ', $project->tech_stack)) }}"
+                    value="{{ old('tech_stack', implode(', ', $project->tech_stack ?? [])) }}"
                     class="w-full border rounded px-3 py-2">
                 @error('tech_stack')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
             </div>
 
             <div class="mb-4">
-                <label for="team_members" class="block font-medium mb-1">Team Members (comma-separated)</label>
+                <label class="block font-medium mb-1">Team Members (platform accounts)</label>
+                <div class="border rounded px-3 py-2 max-h-40 overflow-y-auto">
+                    @foreach ($availableStudents as $student)
+                        <label class="flex items-center gap-2 mb-1">
+                            <input type="checkbox" name="student_ids[]" value="{{ $student->id }}"
+                                @checked(collect(old('student_ids', $project->students->pluck('id')))->contains($student->id))>
+                            {{ $student->user->name }}
+                        </label>
+                    @endforeach
+                </div>
+                @error('student_ids')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+            </div>
+
+            <div class="mb-4">
+                <label for="team_members" class="block font-medium mb-1">Other Contributors Without an Account (optional, comma-separated)</label>
                 <input type="text" name="team_members" id="team_members"
-                    value="{{ old('team_members', implode(', ', $project->team_members)) }}"
+                    value="{{ old('team_members', implode(', ', $project->team_members ?? [])) }}"
                     class="w-full border rounded px-3 py-2">
                 @error('team_members')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
             </div>

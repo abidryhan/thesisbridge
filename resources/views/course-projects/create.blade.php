@@ -1,17 +1,29 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Submit a Course Project
+            {{ $originalProject ? 'Continue a Project' : 'Submit a Course Project' }}
         </h2>
     </x-slot>
 
     <div class="max-w-2xl mx-auto py-8 px-4">
+        @if ($originalProject)
+            <div class="bg-blue-50 text-blue-800 px-4 py-2 rounded mb-4 text-sm">
+                Continuing: <strong>{{ $originalProject->title }}</strong> — your submission will be linked
+                back to it and credited accordingly.
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('course-projects.store') }}" enctype="multipart/form-data">
             @csrf
 
+            @if ($originalProject)
+                <input type="hidden" name="continued_from_id" value="{{ $originalProject->id }}">
+            @endif
+
             <div class="mb-4">
                 <label for="title" class="block font-medium mb-1">Title</label>
-                <input type="text" name="title" id="title" value="{{ old('title') }}"
+                <input type="text" name="title" id="title"
+                    value="{{ old('title', $originalProject ? 'Continuation of: ' . $originalProject->title : '') }}"
                     class="w-full border rounded px-3 py-2">
                 @error('title')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
             </div>
@@ -31,7 +43,22 @@
             </div>
 
             <div class="mb-4">
-                <label for="team_members" class="block font-medium mb-1">Team Members (comma-separated)</label>
+                <label class="block font-medium mb-1">Team Members (platform accounts)</label>
+                <div class="border rounded px-3 py-2 max-h-40 overflow-y-auto">
+                    @foreach ($availableStudents as $student)
+                        <label class="flex items-center gap-2 mb-1">
+                            <input type="checkbox" name="student_ids[]" value="{{ $student->id }}"
+                                @checked(collect(old('student_ids'))->contains($student->id))>
+                            {{ $student->user->name }}
+                        </label>
+                    @endforeach
+                </div>
+                @error('student_ids')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                <p class="text-gray-500 text-xs mt-1">You're automatically included as a team member.</p>
+            </div>
+
+            <div class="mb-4">
+                <label for="team_members" class="block font-medium mb-1">Other Contributors Without an Account (optional, comma-separated)</label>
                 <input type="text" name="team_members" id="team_members" value="{{ old('team_members') }}"
                     placeholder="Jane Doe, John Smith" class="w-full border rounded px-3 py-2">
                 @error('team_members')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
@@ -81,10 +108,12 @@
                 <label for="screenshots" class="block font-medium mb-1">Screenshots (optional, multiple allowed)</label>
                 <input type="file" name="screenshots[]" id="screenshots" multiple accept="image/*"
                     class="w-full border rounded px-3 py-2">
-                @error('screenshots.*')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                @error('screenshots')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
             </div>
 
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Submit Project</button>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
+                {{ $originalProject ? 'Submit Continuation' : 'Submit Project' }}
+            </button>
         </form>
     </div>
 </x-app-layout>
