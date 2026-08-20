@@ -163,7 +163,7 @@ class CourseProjectController extends Controller
 
     protected function authorizeTeamMember(CourseProject $course_project): void
     {
-        $student = auth()->user()->student ?? null;
+        $student = auth()->user()->student;
         $isTeamMember = $student && $course_project->students->contains('id', $student->id);
         $isOriginalSubmitter = auth()->id() === $course_project->user_id;
 

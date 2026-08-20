@@ -20,7 +20,7 @@
         <div class="mb-4">
             <span class="font-medium">Tech Stack:</span>
             <div class="flex gap-2 flex-wrap mt-1">
-                @foreach ($project->tech_stack ?? [] as $tech)
+                @foreach ($project->tech_stack as $tech)
                     <span class="bg-gray-200 px-2 py-1 rounded text-sm">{{ $tech }}</span>
                 @endforeach
             </div>
@@ -33,9 +33,7 @@
                     {{ $project->students->pluck('user.name')->implode(', ') }}
                 @endif
                 @if (!empty($project->team_members))
-                    @if ($project->students->isNotEmpty())
-                        <span class="text-gray-400"> + </span>
-                    @endif
+                    @if ($project->students->isNotEmpty())<span class="text-gray-400"> + </span>@endif
                     {{ implode(', ', $project->team_members) }}
                     <span class="text-gray-400 text-xs">(no platform account)</span>
                 @endif

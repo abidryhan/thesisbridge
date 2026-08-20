@@ -27,7 +27,7 @@
             <div class="mb-4">
                 <label for="tech_stack" class="block font-medium mb-1">Tech Stack (comma-separated)</label>
                 <input type="text" name="tech_stack" id="tech_stack"
-                    value="{{ old('tech_stack', implode(', ', $project->tech_stack ?? [])) }}"
+                    value="{{ old('tech_stack', implode(', ', $project->tech_stack)) }}"
                     class="w-full border rounded px-3 py-2">
                 @error('tech_stack')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
             </div>
