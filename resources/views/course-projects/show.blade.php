@@ -9,8 +9,10 @@
         @if (session('success'))
             <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">{{ session('success') }}</div>
         @endif
+        @if (session('error'))
+            <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">{{ session('error') }}</div>
+        @endif
 
-        <h1 class="text-2xl font-bold mb-2">{{ $project->title }}</h1>
         <p class="text-gray-500 mb-6">{{ $project->term }} {{ $project->year }} &middot; {{ $project->course_name }}</p>
 
         <p class="mb-6">{{ $project->description }}</p>
@@ -25,9 +27,27 @@
         </div>
 
         <div class="mb-4">
-            <span class="font-medium">Team Members:</span>
-            <p>{{ implode(', ', $project->team_members) }}</p>
+            <span class="font-medium">Team:</span>
+            <p>
+                @if ($project->students->isNotEmpty())
+                    {{ $project->students->pluck('user.name')->implode(', ') }}
+                @endif
+                @if (!empty($project->team_members))
+                    @if ($project->students->isNotEmpty())<span class="text-gray-400"> + </span>@endif
+                    {{ implode(', ', $project->team_members) }}
+                    <span class="text-gray-400 text-xs">(no platform account)</span>
+                @endif
+            </p>
         </div>
+
+        @if ($project->continuedFrom)
+            <p class="text-sm text-gray-600 mb-4">
+                Continued from:
+                <a href="{{ route('course-projects.show', $project->continuedFrom) }}" class="text-blue-600 underline">
+                    {{ $project->continuedFrom->title }}
+                </a>
+            </p>
+        @endif
 
         @if ($project->github_link)
             <div class="mb-2">
@@ -50,6 +70,38 @@
                     @endforeach
                 </div>
             </div>
+        @endif
+
+        @if ($project->continuations->isNotEmpty())
+            <div class="mb-6">
+                <h3 class="font-semibold mb-1">Continued By</h3>
+                <ul class="list-disc list-inside text-sm">
+                    @foreach ($project->continuations as $continuation)
+                        <li>
+                            <a href="{{ route('course-projects.show', $continuation) }}" class="text-blue-600 underline">
+                                {{ $continuation->title }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        @if ($canToggle)
+            <form method="POST" action="{{ route('course-projects.toggle-continuation', $project) }}" class="mb-4">
+                @csrf
+                @method('PATCH')
+                <button type="submit"
+                    class="{{ $project->is_open_for_continuation ? 'bg-gray-200 text-gray-700' : 'bg-blue-600 text-white' }} px-4 py-2 rounded text-sm">
+                    {{ $project->is_open_for_continuation ? 'Close for Continuation' : 'Open for Continuation' }}
+                </button>
+            </form>
+        @endif
+
+        @if ($project->is_open_for_continuation && auth()->check() && !$canToggle)
+            <a href="{{ route('course-projects.claim', $project) }}" class="bg-green-600 text-white px-4 py-2 rounded text-sm inline-block mb-4">
+                Claim &amp; Continue This Project
+            </a>
         @endif
 
         @if ($isOwner)
