@@ -43,6 +43,8 @@ Route::middleware('auth')->group(function () {
         ->name('course-projects.claim');
     Route::patch('course-projects/{course_project}/toggle-continuation', [CourseProjectController::class, 'toggleContinuation'])
         ->name('course-projects.toggle-continuation');
+    Route::get('thesis-groups/supervised', [ThesisGroupController::class, 'supervised'])
+        ->name('thesis-groups.supervised');    
 
     Route::resource('thesis-groups', ThesisGroupController::class);
     Route::resource('proposals', ProposalController::class)->only(['create', 'store', 'show', 'edit', 'update']);
