@@ -40,7 +40,10 @@ class StudentController extends Controller
 
     public function show(Student $student): View
     {
-        return view('students.show', ['student' => $student]);
+        return view('students.show', [
+            'student' => $student,
+            'skillFingerprint' => $student->skillFingerprint(),
+        ]);
     }
 
     public function edit(Student $student): View
