@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use App\Models\CourseProject;
+use Illuminate\Support\Collection;
 
 class Proposal extends Model
 {
@@ -27,15 +29,14 @@ class Proposal extends Model
         'approved' => [],
     ];
 
-    public function thesisGroup(): BelongsTo
-    {
-        return $this->belongsTo(ThesisGroup::class);
-    }
-
     protected $casts = [
         'research_tags' => 'array',
     ];
 
+    public function thesisGroup(): BelongsTo
+    {
+        return $this->belongsTo(ThesisGroup::class);
+    }
 
     public function statusHistory(): HasMany
     {
@@ -64,5 +65,46 @@ class Proposal extends Model
                 'changed_by_user_id' => $actor->id,
             ]);
         });
+    }
+
+    public static function researchThreadMap(): Collection
+    {
+        $proposals = self::where('status', 'approved')
+            ->get()
+            ->filter(fn ($proposal) => !empty($proposal->research_tags));
+
+        $courseProjects = CourseProject::all()
+            ->filter(fn ($project) => !empty($project->research_tags));
+
+        $entries = collect();
+
+        foreach ($proposals as $proposal) {
+            foreach ($proposal->research_tags as $tag) {
+                $entries->push([
+                    'tag' => $tag,
+                    'type' => 'thesis',
+                    'title' => $proposal->title,
+                    'created_at' => $proposal->created_at,
+                    'model' => $proposal,
+                ]);
+            }
+        }
+
+        foreach ($courseProjects as $project) {
+            foreach ($project->research_tags as $tag) {
+                $entries->push([
+                    'tag' => $tag,
+                    'type' => 'course_project',
+                    'title' => $project->title,
+                    'created_at' => $project->created_at,
+                    'model' => $project,
+                ]);
+            }
+        }
+
+        return $entries
+            ->groupBy('tag')
+            ->map(fn ($group) => $group->sortByDesc('created_at')->values())
+            ->sortKeys();
     }
 }

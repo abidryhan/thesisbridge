@@ -29,11 +29,11 @@ class CourseProject extends Model
     ];
 
     protected $casts = [
-        'tech_stack' => 'array',
-        'team_members' => 'array',
-        'screenshot_paths' => 'array',
-        'is_open_for_continuation' => 'boolean',
-    ];
+    'tech_stack' => 'array',
+    'team_members' => 'array',
+    'screenshot_paths' => 'array',
+    'research_tags' => 'array',
+];
 
     public function user(): BelongsTo
     {
