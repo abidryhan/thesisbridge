@@ -16,10 +16,21 @@
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
+
                         <x-nav-link :href="route('thesis-groups.index')" :active="request()->routeIs('thesis-groups.*')">
                             {{ __('Thesis Groups') }}
                         </x-nav-link>
+
+                        @if (auth()->user()->supervisor)
+                            <x-nav-link
+                                :href="route('thesis-groups.supervised')"
+                                :active="request()->routeIs('thesis-groups.supervised')"
+                            >
+                                {{ __('My Supervised Groups') }}
+                            </x-nav-link>
+                        @endif
                     @endauth
+
                     <x-nav-link :href="route('course-projects.index')" :active="request()->routeIs('course-projects.*')">
                         {{ __('Course Projects') }}
                     </x-nav-link>
@@ -61,8 +72,13 @@
                     </x-dropdown>
                 @else
                     <div class="space-x-4">
-                        <a href="{{ route('login') }}" class="text-sm text-gray-700 hover:text-gray-900">{{ __('Log in') }}</a>
-                        <a href="{{ route('register') }}" class="text-sm text-gray-700 hover:text-gray-900">{{ __('Register') }}</a>
+                        <a href="{{ route('login') }}" class="text-sm text-gray-700 hover:text-gray-900">
+                            {{ __('Log in') }}
+                        </a>
+
+                        <a href="{{ route('register') }}" class="text-sm text-gray-700 hover:text-gray-900">
+                            {{ __('Register') }}
+                        </a>
                     </div>
                 @endauth
             </div>
@@ -86,10 +102,21 @@
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
+
                 <x-responsive-nav-link :href="route('thesis-groups.index')" :active="request()->routeIs('thesis-groups.*')">
                     {{ __('Thesis Groups') }}
                 </x-responsive-nav-link>
+
+                @if (auth()->user()->supervisor)
+                    <x-responsive-nav-link
+                        :href="route('thesis-groups.supervised')"
+                        :active="request()->routeIs('thesis-groups.supervised')"
+                    >
+                        {{ __('My Supervised Groups') }}
+                    </x-responsive-nav-link>
+                @endif
             @endauth
+
             <x-responsive-nav-link :href="route('course-projects.index')" :active="request()->routeIs('course-projects.*')">
                 {{ __('Course Projects') }}
             </x-responsive-nav-link>
@@ -99,8 +126,13 @@
         @auth
             <div class="pt-4 pb-1 border-t border-gray-200">
                 <div class="px-4">
-                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    <div class="font-medium text-base text-gray-800">
+                        {{ Auth::user()->name }}
+                    </div>
+
+                    <div class="font-medium text-sm text-gray-500">
+                        {{ Auth::user()->email }}
+                    </div>
                 </div>
 
                 <div class="mt-3 space-y-1">
@@ -122,8 +154,13 @@
             </div>
         @else
             <div class="pt-4 pb-1 border-t border-gray-200 px-4 space-y-1">
-                <a href="{{ route('login') }}" class="block text-sm text-gray-700">{{ __('Log in') }}</a>
-                <a href="{{ route('register') }}" class="block text-sm text-gray-700">{{ __('Register') }}</a>
+                <a href="{{ route('login') }}" class="block text-sm text-gray-700">
+                    {{ __('Log in') }}
+                </a>
+
+                <a href="{{ route('register') }}" class="block text-sm text-gray-700">
+                    {{ __('Register') }}
+                </a>
             </div>
         @endauth
     </div>
