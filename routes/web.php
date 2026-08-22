@@ -28,6 +28,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('course-projects', CourseProjectController::class)->only(['index']);
+Route::get('research-thread-map', [ResearchThreadMapController::class, 'index'])
+    ->name('research-thread-map');
+
 
 Route::middleware('auth')->group(function () {
     Route::resource('students', StudentController::class)->except(['index']);
