@@ -63,9 +63,7 @@ class CourseProjectController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $this->validated($request);
-        $validated['research_tags'] = !empty($validated['research_tags'])
-    ? array_values(array_filter(array_map('trim', explode(',', $validated['research_tags']))))
-    : [];
+
 
 
         $validated['user_id'] = auth()->id();
@@ -73,6 +71,11 @@ class CourseProjectController extends Controller
         $validated['team_members'] = !empty($validated['team_members'])
             ? array_values(array_filter(array_map('trim', explode(',', $validated['team_members']))))
             : [];
+
+        $validated['research_tags'] = !empty($validated['research_tags'])
+            ? array_values(array_filter(array_map('trim', explode(',', $validated['research_tags']))))
+            : [];
+
         unset($validated['screenshots'], $validated['student_ids']);
 
         if ($request->hasFile('screenshots')) {
@@ -123,14 +126,17 @@ class CourseProjectController extends Controller
     public function update(Request $request, CourseProject $course_project): RedirectResponse
     {
         $validated = $this->validated($request);
-        $validated['research_tags'] = !empty($validated['research_tags'])
-    ? array_values(array_filter(array_map('trim', explode(',', $validated['research_tags']))))
-    : [];
+
 
         $validated['tech_stack'] = array_map('trim', explode(',', $validated['tech_stack']));
         $validated['team_members'] = !empty($validated['team_members'])
             ? array_values(array_filter(array_map('trim', explode(',', $validated['team_members']))))
             : [];
+
+        $validated['research_tags'] = !empty($validated['research_tags'])
+            ? array_values(array_filter(array_map('trim', explode(',', $validated['research_tags']))))
+            : [];
+
         unset($validated['screenshots'], $validated['student_ids']);
 
         if ($request->hasFile('screenshots')) {

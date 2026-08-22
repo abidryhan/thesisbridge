@@ -11,6 +11,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\SupervisorMatchController;
 use App\Http\Controllers\ThesisGroupController;
+use App\Http\Controllers\ResearchThreadMapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {

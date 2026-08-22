@@ -33,13 +33,12 @@
             </div>
 
             <div class="mb-4">
-    <label for="research_tags" class="block font-medium mb-1">Research Tags (optional, comma-separated)</label>
-    <input type="text" name="research_tags" id="research_tags"
-        value="{{ old('research_tags', implode(', ', $project->research_tags ?? [])) }}"
-        placeholder="Computer Vision, Robotics" class="w-full border rounded px-3 py-2">
-    @error('research_tags')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
-</div>
-
+                <label for="research_tags" class="block font-medium mb-1">Research Tags (optional, comma-separated)</label>
+                <input type="text" name="research_tags" id="research_tags"
+                    value="{{ old('research_tags', implode(', ', $project->research_tags ?? [])) }}"
+                    placeholder="Computer Vision, Robotics" class="w-full border rounded px-3 py-2">
+                @error('research_tags')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+            </div>
 
             <div class="mb-4">
                 <label class="block font-medium mb-1">Team Members (platform accounts)</label>

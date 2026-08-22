@@ -72,6 +72,18 @@
             </div>
         @endif
 
+        @if (!empty($project->research_tags))
+            <div class="mb-4">
+                <span class="font-medium">Research Tags:</span>
+                <div class="flex gap-2 flex-wrap mt-1">
+                    @foreach ($project->research_tags as $tag)
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">{{ $tag }}</span>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+
         @if ($project->continuations->isNotEmpty())
             <div class="mb-6">
                 <h3 class="font-semibold mb-1">Continued By</h3>
@@ -116,15 +128,6 @@
         @endif
     </div>
 
-    @if (!empty($project->research_tags))
-    <div class="mb-4">
-        <span class="font-medium">Research Tags:</span>
-        <div class="flex gap-2 flex-wrap mt-1">
-            @foreach ($project->research_tags as $tag)
-                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">{{ $tag }}</span>
-            @endforeach
-        </div>
-    </div>
-@endif
+
 
 </x-app-layout>

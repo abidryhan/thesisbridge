@@ -26,6 +26,7 @@ class CourseProject extends Model
         'screenshot_paths',
         'is_open_for_continuation',
         'continued_from_id',
+        'research_tags',
     ];
 
     protected $casts = [
