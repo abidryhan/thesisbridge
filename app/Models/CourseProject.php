@@ -26,14 +26,15 @@ class CourseProject extends Model
         'screenshot_paths',
         'is_open_for_continuation',
         'continued_from_id',
+        'research_tags',
     ];
 
     protected $casts = [
-        'tech_stack' => 'array',
-        'team_members' => 'array',
-        'screenshot_paths' => 'array',
-        'is_open_for_continuation' => 'boolean',
-    ];
+    'tech_stack' => 'array',
+    'team_members' => 'array',
+    'screenshot_paths' => 'array',
+    'research_tags' => 'array',
+];
 
     public function user(): BelongsTo
     {

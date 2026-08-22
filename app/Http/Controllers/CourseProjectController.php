@@ -11,24 +11,26 @@ use Illuminate\View\View;
 class CourseProjectController extends Controller
 {
     private function validated(Request $request): array
-    {
-        return $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'tech_stack' => 'required|string',
-            'team_members' => 'nullable|string',
-            'student_ids' => 'nullable|array',
-            'student_ids.*' => 'exists:students,id',
-            'term' => 'required|in:Spring,Summer,Fall',
-            'year' => 'required|integer|min:2000|max:2100',
-            'course_name' => 'required|string|max:255',
-            'github_link' => 'nullable|url|max:255',
-            'demo_link' => 'nullable|url|max:255',
-            'screenshots' => 'nullable|array',
-            'screenshots.*' => 'image|max:10240',
-            'continued_from_id' => 'nullable|exists:course_projects,id',
-        ]);
-    }
+{
+    return $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+        'tech_stack' => 'required|string',
+        'team_members' => 'nullable|string',
+        'student_ids' => 'nullable|array',
+        'student_ids.*' => 'exists:students,id',
+        'research_tags' => 'nullable|string',
+        'term' => 'required|in:Spring,Summer,Fall',
+        'year' => 'required|integer|min:2000|max:2100',
+        'course_name' => 'required|string|max:255',
+        'github_link' => 'nullable|url|max:255',
+        'demo_link' => 'nullable|url|max:255',
+        'screenshots' => 'nullable|array',
+        'screenshots.*' => 'image|max:10240',
+        'continued_from_id' => 'nullable|exists:course_projects,id',
+    ]);
+}
+
 
     public function index(): View
     {
@@ -62,11 +64,18 @@ class CourseProjectController extends Controller
     {
         $validated = $this->validated($request);
 
+
+
         $validated['user_id'] = auth()->id();
         $validated['tech_stack'] = array_map('trim', explode(',', $validated['tech_stack']));
         $validated['team_members'] = !empty($validated['team_members'])
             ? array_values(array_filter(array_map('trim', explode(',', $validated['team_members']))))
             : [];
+
+        $validated['research_tags'] = !empty($validated['research_tags'])
+            ? array_values(array_filter(array_map('trim', explode(',', $validated['research_tags']))))
+            : [];
+
         unset($validated['screenshots'], $validated['student_ids']);
 
         if ($request->hasFile('screenshots')) {
@@ -118,10 +127,16 @@ class CourseProjectController extends Controller
     {
         $validated = $this->validated($request);
 
+
         $validated['tech_stack'] = array_map('trim', explode(',', $validated['tech_stack']));
         $validated['team_members'] = !empty($validated['team_members'])
             ? array_values(array_filter(array_map('trim', explode(',', $validated['team_members']))))
             : [];
+
+        $validated['research_tags'] = !empty($validated['research_tags'])
+            ? array_values(array_filter(array_map('trim', explode(',', $validated['research_tags']))))
+            : [];
+
         unset($validated['screenshots'], $validated['student_ids']);
 
         if ($request->hasFile('screenshots')) {

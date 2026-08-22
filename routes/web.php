@@ -11,6 +11,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\SupervisorMatchController;
 use App\Http\Controllers\ThesisGroupController;
+use App\Http\Controllers\ResearchThreadMapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,6 +29,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('course-projects', CourseProjectController::class)->only(['index']);
+Route::get('research-thread-map', [ResearchThreadMapController::class, 'index'])
+    ->name('research-thread-map');
+
 
 Route::middleware('auth')->group(function () {
     Route::resource('students', StudentController::class)->except(['index']);
