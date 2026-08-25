@@ -89,4 +89,32 @@ class ThesisGroup extends Model
         return $this->daysSinceLastActivity() > config('thesisbridge.ghost_threshold_days');
     }
 
+    public function completedAt(): ?Carbon
+    {
+        $milestones = $this->milestones;
+
+        if ($milestones->isEmpty() || $milestones->contains(fn ($milestone) => is_null($milestone->completed_at))) {
+            return null;
+        }
+
+        return $milestones->max('completed_at');
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->completedAt() !== null;
+    }
+
+    public function completionDurationInDays(): ?int
+    {
+        $completedAt = $this->completedAt();
+        $approvedAt = $this->proposal?->approvedAt();
+
+        if (!$completedAt || !$approvedAt) {
+            return null;
+        }
+
+        return (int) $approvedAt->diffInDays($completedAt);
+    }
+
 }
