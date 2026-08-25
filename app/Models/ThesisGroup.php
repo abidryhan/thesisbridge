@@ -58,38 +58,35 @@ class ThesisGroup extends Model
         }
 
         return false;
-    }public function lastStudentActivityAt(): ?Carbon
-{
-    $lastDocument = Document::whereHas(
-        'milestone',
-        fn ($query) => $query->where('thesis_group_id', $this->id)
-    )
-        ->whereHas('user.student')
-        ->latest('created_at')
-        ->first();
+    }
 
-    $lastMeeting = $this->meetings()
-        ->whereHas('loggedBy.student')
-        ->latest('created_at')
-        ->first();
+    public function lastStudentActivityAt(): ?Carbon
+    {
+        $lastDocument = Document::whereHas('milestone', fn ($query) => $query->where('thesis_group_id', $this->id))
+            ->whereHas('user.student')
+            ->latest('created_at')
+            ->first();
 
-    return collect([
-        $lastDocument?->created_at,
-        $lastMeeting?->created_at,
-    ])
-        ->filter()
-        ->max();
-}
+        $lastMeeting = $this->meetings()
+            ->whereHas('loggedBy.student')
+            ->latest('created_at')
+            ->first();
 
-public function daysSinceLastActivity(): int
-{
-    $referenceDate = $this->lastStudentActivityAt() ?? $this->created_at;
+        return collect([$lastDocument?->created_at, $lastMeeting?->created_at])
+            ->filter()
+            ->max();
+    }
 
-    return (int) $referenceDate->diffInDays(now());
-}
+    public function daysSinceLastActivity(): int
+    {
+        $referenceDate = $this->lastStudentActivityAt() ?? $this->created_at;
 
-public function isGhost(): bool
-{
-    return $this->daysSinceLastActivity() > config('thesisbridge.ghost_threshold_days');
-}
+        return (int) $referenceDate->diffInDays(now());
+    }
+
+    public function isGhost(): bool
+    {
+        return $this->daysSinceLastActivity() > config('thesisbridge.ghost_threshold_days');
+    }
+
 }
