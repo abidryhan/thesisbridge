@@ -71,7 +71,7 @@
                     Supervisor Matching
                 </span>
 
-                <a
+                
                     href="{{ route('thesis-groups.supervisor-matches', $group) }}"
                     class="text-blue-600 text-sm underline"
                 >
@@ -129,20 +129,35 @@
                         Deadline: {{ $milestone->deadline->format('M d, Y') }}
                     </p>
 
-                    <div class="flex gap-4 mt-2">
-                        <a
+                    <div class="flex gap-4 mt-2 items-center">
+                        
                             href="{{ route('thesis-groups.milestones.documents.index', [$group, $milestone]) }}"
                             class="text-blue-600 text-sm underline"
                         >
                             View Documents ({{ $milestone->documents_count }})
                         </a>
 
-                        <a
+                        
                             href="{{ route('thesis-groups.milestones.feedback.index', [$group, $milestone]) }}"
                             class="text-blue-600 text-sm underline"
                         >
                             View Feedback ({{ $milestone->feedback_count }})
                         </a>
+
+                        @if ($isSupervisor)
+                            <form method="POST" action="{{ route('thesis-groups.milestones.toggle-complete', [$group, $milestone]) }}">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit"
+                                    class="{{ $milestone->completed_at ? 'bg-gray-200 text-gray-700' : 'bg-green-600 text-white' }} text-xs px-2 py-1 rounded">
+                                    {{ $milestone->completed_at ? 'Mark Incomplete' : 'Mark Complete' }}
+                                </button>
+                            </form>
+                        @endif
+
+                        @if ($milestone->completed_at)
+                            <span class="text-xs text-green-700">✓ Completed {{ $milestone->completed_at->format('M d, Y') }}</span>
+                        @endif
                     </div>
                 </div>
             @empty
@@ -160,7 +175,7 @@
                     Meeting Log
                 </span>
 
-                <a
+                
                     href="{{ route('thesis-groups.meetings.index', $group) }}"
                     class="text-blue-600 text-sm underline"
                 >
@@ -170,7 +185,7 @@
         </div>
 
         <div class="mt-6 flex gap-3">
-            <a
+            
                 href="{{ route('thesis-groups.edit', $group) }}"
                 class="bg-blue-600 text-white px-4 py-2 rounded"
             >
@@ -193,7 +208,7 @@
                 </button>
             </form>
 
-            <a
+            
                 href="{{ route('thesis-groups.index') }}"
                 class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
             >
