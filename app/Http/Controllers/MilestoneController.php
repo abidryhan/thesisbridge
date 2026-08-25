@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Milestone;
 use App\Models\ThesisGroup;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -35,7 +36,27 @@ class MilestoneController extends Controller
             ->with('success', 'Milestone created successfully.');
     }
 
+    public function toggleComplete(ThesisGroup $thesis_group, Milestone $milestone): RedirectResponse
+    {
+        $this->checkNesting($thesis_group, $milestone);
+        $this->authorizeSupervisor($thesis_group);
 
+        $milestone->update([
+            'completed_at' => $milestone->completed_at ? null : now(),
+        ]);
+
+        return redirect()->route('thesis-groups.show', $thesis_group)
+            ->with('success', $milestone->completed_at
+                ? 'Milestone marked complete.'
+                : 'Milestone marked incomplete.');
+    }
+
+    protected function checkNesting(ThesisGroup $thesis_group, Milestone $milestone): void
+    {
+        if ($milestone->thesis_group_id !== $thesis_group->id) {
+            abort(404);
+        }
+    }
 
     protected function authorizeSupervisor(ThesisGroup $thesis_group): void
     {
