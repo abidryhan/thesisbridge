@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\Document;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class ThesisGroup extends Model
 {
@@ -57,4 +59,34 @@ class ThesisGroup extends Model
 
         return false;
     }
+
+    public function lastStudentActivityAt(): ?Carbon
+    {
+        $lastDocument = Document::whereHas('milestone', fn ($query) => $query->where('thesis_group_id', $this->id))
+            ->whereHas('user.student')
+            ->latest('created_at')
+            ->first();
+
+        $lastMeeting = $this->meetings()
+            ->whereHas('loggedBy.student')
+            ->latest('created_at')
+            ->first();
+
+        return collect([$lastDocument?->created_at, $lastMeeting?->created_at])
+            ->filter()
+            ->max();
+    }
+
+    public function daysSinceLastActivity(): int
+    {
+        $referenceDate = $this->lastStudentActivityAt() ?? $this->created_at;
+
+        return (int) $referenceDate->diffInDays(now());
+    }
+
+    public function isGhost(): bool
+    {
+        return $this->daysSinceLastActivity() > config('thesisbridge.ghost_threshold_days');
+    }
+
 }
