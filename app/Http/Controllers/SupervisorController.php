@@ -42,7 +42,13 @@ class SupervisorController extends Controller
 
     public function show(Supervisor $supervisor): View
     {
-        return view('supervisors.show', ['supervisor' => $supervisor]);
+        return view('supervisors.show', [
+            'supervisor' => $supervisor,
+            'averageCompletionTime' => $supervisor->averageCompletionTimeInDays(),
+            'adherenceRate' => $supervisor->milestoneAdherenceRate(),
+            'totalSupervised' => $supervisor->totalSupervised(),
+            'researchAreasCovered' => $supervisor->researchAreasCovered(),
+        ]);
     }
 
     public function edit(Supervisor $supervisor): View
@@ -67,7 +73,6 @@ class SupervisorController extends Controller
         return redirect()->route('supervisors.show', $supervisor)
             ->with('success', 'Profile updated successfully.');
     }
-
 
     public function destroy(Supervisor $supervisor): RedirectResponse
     {

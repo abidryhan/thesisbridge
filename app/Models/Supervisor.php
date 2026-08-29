@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Supervisor extends Model
 {
@@ -31,7 +32,58 @@ class Supervisor extends Model
 
     public function currentLoad(): int
     {
+        return $this->thesisGroups()
+            ->get()
+            ->reject(fn (ThesisGroup $group) => $group->isCompleted())
+            ->count();
+    }
+
+    public function totalSupervised(): int
+    {
         return $this->thesisGroups()->count();
+    }
+
+    public function averageCompletionTimeInDays(): ?float
+    {
+        $durations = $this->thesisGroups()
+            ->get()
+            ->map(fn (ThesisGroup $group) => $group->completionDurationInDays())
+            ->filter();
+
+        if ($durations->isEmpty()) {
+            return null;
+        }
+
+        return round($durations->avg(), 1);
+    }
+
+    public function milestoneAdherenceRate(): ?float
+    {
+        $groupIds = $this->thesisGroups()->pluck('id');
+
+        $resolvedMilestones = Milestone::whereIn('thesis_group_id', $groupIds)
+            ->get()
+            ->filter(fn (Milestone $milestone) => $milestone->completed_at !== null || $milestone->deadline->isPast());
+
+        if ($resolvedMilestones->isEmpty()) {
+            return null;
+        }
+
+        $onTime = $resolvedMilestones->filter(
+            fn (Milestone $milestone) => $milestone->completed_at !== null && $milestone->completed_at->lte($milestone->deadline)
+        )->count();
+
+        return round(($onTime / $resolvedMilestones->count()) * 100, 1);
+    }
+
+    public function researchAreasCovered(): Collection
+    {
+        return $this->thesisGroups()
+            ->get()
+            ->map(fn (ThesisGroup $group) => $group->proposal?->research_tags ?? [])
+            ->flatten()
+            ->countBy()
+            ->sortDesc();
     }
 
     public function compatibilityScoreWith(ThesisGroup $group): int

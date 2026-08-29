@@ -14,10 +14,12 @@ class Milestone extends Model
         'description',
         'deadline',
         'deliverable_type',
+        'completed_at',
     ];
 
     protected $casts = [
         'deadline' => 'date',
+        'completed_at' => 'datetime',
     ];
 
     public function thesisGroup(): BelongsTo

@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('thesis-groups', ThesisGroupController::class);
     Route::resource('proposals', ProposalController::class)->only(['create', 'store', 'show', 'edit', 'update']);
     Route::resource('thesis-groups.milestones', MilestoneController::class)->only(['create', 'store']);
+    Route::patch('thesis-groups/{thesis_group}/milestones/{milestone}/toggle-complete', [MilestoneController::class, 'toggleComplete'])
+        ->name('thesis-groups.milestones.toggle-complete');
     Route::resource('thesis-groups.milestones.documents', DocumentController::class)->only(['index', 'create', 'store']);
     Route::resource('thesis-groups.meetings', MeetingController::class)->only(['index', 'create', 'store']);
     Route::resource('thesis-groups.milestones.feedback', FeedbackController::class)->only(['index', 'create', 'store']);

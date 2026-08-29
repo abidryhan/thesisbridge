@@ -83,12 +83,19 @@
         <div class="bg-white shadow rounded-lg p-6 mt-6">
             <div class="flex justify-between items-center">
                 <span class="font-medium text-gray-700">Thesis Proposal</span>
+
                 @if ($group->proposal)
-                    <a href="{{ route('proposals.show', $group->proposal) }}" class="text-blue-600 text-sm underline">
+                    <a
+                        href="{{ route('proposals.show', $group->proposal) }}"
+                        class="text-blue-600 text-sm underline"
+                    >
                         View Proposal
                     </a>
                 @else
-                    <a href="{{ route('proposals.create') }}" class="text-blue-600 text-sm underline">
+                    <a
+                        href="{{ route('proposals.create') }}"
+                        class="text-blue-600 text-sm underline"
+                    >
                         Submit Proposal
                     </a>
                 @endif
@@ -102,11 +109,13 @@
                 </span>
 
                 @if ($isSupervisor && $group->proposal && $group->proposal->status === 'approved')
-                    <a href="{{ route('thesis-groups.milestones.create', $group) }}" class="bg-blue-600 text-white px-4 py-2 rounded">
+                    <a
+                        href="{{ route('thesis-groups.milestones.create', $group) }}"
+                        class="bg-blue-600 text-white px-4 py-2 rounded"
+                    >
                         Add Milestone
                     </a>
                 @endif
-
             </div>
 
             @forelse ($group->milestones as $milestone)
@@ -129,7 +138,7 @@
                         Deadline: {{ $milestone->deadline->format('M d, Y') }}
                     </p>
 
-                    <div class="flex gap-4 mt-2">
+                    <div class="flex gap-4 mt-2 items-center">
                         <a
                             href="{{ route('thesis-groups.milestones.documents.index', [$group, $milestone]) }}"
                             class="text-blue-600 text-sm underline"
@@ -143,6 +152,29 @@
                         >
                             View Feedback ({{ $milestone->feedback_count }})
                         </a>
+
+                        @if ($isSupervisor)
+                            <form
+                                method="POST"
+                                action="{{ route('thesis-groups.milestones.toggle-complete', [$group, $milestone]) }}"
+                            >
+                                @csrf
+                                @method('PATCH')
+
+                                <button
+                                    type="submit"
+                                    class="{{ $milestone->completed_at ? 'bg-gray-200 text-gray-700' : 'bg-green-600 text-white' }} text-xs px-2 py-1 rounded"
+                                >
+                                    {{ $milestone->completed_at ? 'Mark Incomplete' : 'Mark Complete' }}
+                                </button>
+                            </form>
+                        @endif
+
+                        @if ($milestone->completed_at)
+                            <span class="text-xs text-green-700">
+                                ✓ Completed {{ $milestone->completed_at->format('M d, Y') }}
+                            </span>
+                        @endif
                     </div>
                 </div>
             @empty
@@ -151,8 +183,6 @@
                 </p>
             @endforelse
         </div>
-
-
 
         <div class="bg-white shadow rounded-lg p-6 mt-6">
             <div class="flex justify-between items-center">

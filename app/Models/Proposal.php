@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use App\Models\CourseProject;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Carbon;
 
 class Proposal extends Model
 {
@@ -106,5 +107,13 @@ class Proposal extends Model
             ->groupBy('tag')
             ->map(fn ($group) => $group->sortByDesc('created_at')->values())
             ->sortKeys();
+    }
+
+    public function approvedAt(): ?Carbon
+    {
+        return $this->statusHistory()
+            ->where('status', 'approved')
+            ->reorder('created_at', 'asc')
+            ->first()?->created_at;
     }
 }
