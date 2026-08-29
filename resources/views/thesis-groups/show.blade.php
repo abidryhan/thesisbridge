@@ -199,36 +199,15 @@
             </div>
         </div>
 
-        <div class="mt-6 flex gap-3">
-            <a
-                href="{{ route('thesis-groups.edit', $group) }}"
-                class="bg-blue-600 text-white px-4 py-2 rounded"
-            >
-                Edit
-            </a>
-
-            <form
-                method="POST"
-                action="{{ route('thesis-groups.destroy', $group) }}"
-                onsubmit="return confirm('Are you sure you want to delete this group?');"
-            >
-                @csrf
-                @method('DELETE')
-
-                <button
-                    type="submit"
-                    class="bg-red-600 text-white px-4 py-2 rounded"
-                >
-                    Delete
-                </button>
-            </form>
-
-            <a
-                href="{{ route('thesis-groups.index') }}"
-                class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
-            >
-                Back to List
-            </a>
-        </div>
+        @if ($isMember)
+            <div class="flex gap-3">
+                <a href="{{ route('thesis-groups.edit', $group) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Edit</a>
+                <form method="POST" action="{{ route('thesis-groups.destroy', $group) }}" onsubmit="return confirm('Delete this thesis group?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Delete</button>
+                </form>
+            </div>
+        @endif
     </div>
 </x-app-layout>
