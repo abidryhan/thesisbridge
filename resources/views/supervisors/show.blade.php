@@ -27,7 +27,7 @@
                 <div>
                     <span class="text-gray-500 text-sm block">Average Completion Time</span>
                     <span class="text-lg font-medium">
-                        {{ $averageCompletionTime !== null ? round($averageCompletionTime) . ' days' : 'Not enough completed theses yet' }}
+                        {{ $averageCompletionTime !== null ? round($averageCompletionTime) . ' days' : 'Not enough completed milestones yet' }}
                     </span>
                 </div>
                 <div>
