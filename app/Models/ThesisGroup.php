@@ -117,4 +117,63 @@ class ThesisGroup extends Model
         return (int) $approvedAt->diffInDays($completedAt);
     }
 
+    public function activityHeatmap(): array
+    {
+        $approvedAt = $this->proposal?->approvedAt();
+
+        if (!$approvedAt) {
+            return [];
+        }
+
+        $endDate = $this->isCompleted() ? $this->completedAt() : now();
+
+        $documents = Document::whereHas('milestone', fn ($query) => $query->where('thesis_group_id', $this->id))
+            ->get(['created_at']);
+
+        $meetings = $this->meetings()->get(['created_at']);
+
+        $completedMilestones = $this->milestones->whereNotNull('completed_at');
+
+        $weeks = [];
+        $cursor = $approvedAt->copy()->startOfWeek();
+        $lastWeek = $endDate->copy()->startOfWeek();
+
+        while ($cursor->lte($lastWeek)) {
+            $weeks[$cursor->format('Y-m-d')] = [
+                'week_start' => $cursor->copy(),
+                'documents' => 0,
+                'meetings' => 0,
+                'milestones' => 0,
+                'total' => 0,
+            ];
+            $cursor->addWeek();
+        }
+
+        foreach ($documents as $document) {
+            $key = $document->created_at->copy()->startOfWeek()->format('Y-m-d');
+            if (isset($weeks[$key])) {
+                $weeks[$key]['documents']++;
+                $weeks[$key]['total']++;
+            }
+        }
+
+        foreach ($meetings as $meeting) {
+            $key = $meeting->created_at->copy()->startOfWeek()->format('Y-m-d');
+            if (isset($weeks[$key])) {
+                $weeks[$key]['meetings']++;
+                $weeks[$key]['total']++;
+            }
+        }
+
+        foreach ($completedMilestones as $milestone) {
+            $key = $milestone->completed_at->copy()->startOfWeek()->format('Y-m-d');
+            if (isset($weeks[$key])) {
+                $weeks[$key]['milestones']++;
+                $weeks[$key]['total']++;
+            }
+        }
+
+        return array_values($weeks);
+    }
+
 }

@@ -102,6 +102,43 @@
             </div>
         </div>
 
+        <div class="mb-6 border-t pt-4">
+            <h3 class="font-semibold mb-3">Thesis Progress Heatmap</h3>
+
+            @if (empty($activityHeatmap))
+                <p class="text-gray-500 text-sm">
+                    The heatmap will appear once the group's proposal is approved and work has officially begun.
+                </p>
+            @else
+                <div class="flex flex-wrap gap-1">
+                    @foreach ($activityHeatmap as $week)
+                        @php
+                            $shade = match (true) {
+                                $week['total'] === 0 => 'bg-gray-100',
+                                $week['total'] === 1 => 'bg-green-200',
+                                $week['total'] <= 3 => 'bg-green-400',
+                                default => 'bg-green-600',
+                            };
+                            $tooltip = $week['week_start']->format('M d, Y') . ': '
+                                . $week['documents'] . ' document(s), '
+                                . $week['meetings'] . ' meeting(s), '
+                                . $week['milestones'] . ' milestone(s) completed';
+                        @endphp
+                        <div class="w-4 h-4 rounded-sm {{ $shade }}" title="{{ $tooltip }}"></div>
+                    @endforeach
+                </div>
+
+                <div class="flex items-center gap-2 mt-3 text-xs text-gray-500">
+                    <span>Less</span>
+                    <div class="w-3 h-3 rounded-sm bg-gray-100"></div>
+                    <div class="w-3 h-3 rounded-sm bg-green-200"></div>
+                    <div class="w-3 h-3 rounded-sm bg-green-400"></div>
+                    <div class="w-3 h-3 rounded-sm bg-green-600"></div>
+                    <span>More</span>
+                </div>
+            @endif
+        </div>
+
         <div class="bg-white shadow rounded-lg p-6 mt-6">
             <div class="flex justify-between items-center mb-4">
                 <span class="font-medium text-gray-700">
@@ -199,36 +236,17 @@
             </div>
         </div>
 
-        <div class="mt-6 flex gap-3">
-            <a
-                href="{{ route('thesis-groups.edit', $group) }}"
-                class="bg-blue-600 text-white px-4 py-2 rounded"
-            >
-                Edit
-            </a>
 
-            <form
-                method="POST"
-                action="{{ route('thesis-groups.destroy', $group) }}"
-                onsubmit="return confirm('Are you sure you want to delete this group?');"
-            >
-                @csrf
-                @method('DELETE')
 
-                <button
-                    type="submit"
-                    class="bg-red-600 text-white px-4 py-2 rounded"
-                >
-                    Delete
-                </button>
-            </form>
-
-            <a
-                href="{{ route('thesis-groups.index') }}"
-                class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
-            >
-                Back to List
-            </a>
-        </div>
+        @if ($isMember)
+            <div class="flex gap-3">
+                <a href="{{ route('thesis-groups.edit', $group) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Edit</a>
+                <form method="POST" action="{{ route('thesis-groups.destroy', $group) }}" onsubmit="return confirm('Delete this thesis group?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Delete</button>
+                </form>
+            </div>
+        @endif
     </div>
 </x-app-layout>

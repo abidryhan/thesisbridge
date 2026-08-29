@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ThesisGroup;
 use App\Models\Student;
 use App\Models\Supervisor;
+use App\Models\ThesisGroup;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -79,24 +79,31 @@ class ThesisGroupController extends Controller
     }
 
     public function show(ThesisGroup $thesis_group): View
-{
-    $thesis_group->load(['students.user', 'supervisor', 'milestones' => function ($query) {
-        $query->withCount(['documents', 'feedback']);
-}]);
+    {
+        $thesis_group->load(['students.user', 'supervisor', 'milestones' => function ($query) {
+            $query->withCount(['documents', 'feedback']);
+        }]);
 
+        $this->authorizeAccess($thesis_group);
 
-    $currentSupervisor = auth()->user()->supervisor;
-    $isSupervisor = $currentSupervisor && $thesis_group->isSupervisedBy($currentSupervisor);
+        $currentSupervisor = auth()->user()->supervisor;
+        $isSupervisor = $currentSupervisor && $thesis_group->isSupervisedBy($currentSupervisor);
 
-    return view('thesis-groups.show', [
-        'group' => $thesis_group,
-        'isSupervisor' => $isSupervisor,
-    ]);
-}
+        $currentStudent = auth()->user()->student;
+        $isMember = $currentStudent && $thesis_group->students->contains('id', $currentStudent->id);
 
+        return view('thesis-groups.show', [
+            'group' => $thesis_group,
+            'isSupervisor' => $isSupervisor,
+            'isMember' => $isMember,
+            'activityHeatmap' => $thesis_group->activityHeatmap(),
+        ]);
+    }
 
     public function edit(ThesisGroup $thesis_group): View
     {
+        $this->authorizeMember($thesis_group);
+
         $currentMemberIds = $thesis_group->students->pluck('id')->all();
 
         $selectableStudents = Student::where(function ($query) use ($currentMemberIds) {
@@ -115,6 +122,8 @@ class ThesisGroupController extends Controller
 
     public function update(Request $request, ThesisGroup $thesis_group): RedirectResponse
     {
+        $this->authorizeMember($thesis_group);
+
         $validated = $request->validate([
             'group_name' => 'required|string|max:255',
             'supervisor_id' => 'nullable|exists:supervisors,id',
@@ -146,6 +155,8 @@ class ThesisGroupController extends Controller
 
     public function destroy(ThesisGroup $thesis_group): RedirectResponse
     {
+        $this->authorizeMember($thesis_group);
+
         $thesis_group->delete();
 
         return redirect()->route('thesis-groups.index')
@@ -173,6 +184,13 @@ class ThesisGroupController extends Controller
             ->with('success', "Supervisor set to {$supervisor->user->name}.");
     }
 
+    protected function authorizeAccess(ThesisGroup $thesis_group): void
+    {
+        if (!$thesis_group->isAccessibleBy(auth()->user())) {
+            abort(403);
+        }
+    }
+
     protected function authorizeMember(ThesisGroup $thesis_group): void
     {
         $student = auth()->user()->student;
@@ -182,26 +200,4 @@ class ThesisGroupController extends Controller
             abort(403);
         }
     }
-
-    public function supervised(): View
-    {
-        $supervisor = auth()->user()->supervisor;
-
-        if (!$supervisor) {
-            abort(403);
-        }
-
-        $groups = $supervisor->thesisGroups()
-            ->with('students.user')
-            ->latest()
-            ->get()
-            ->map(function (ThesisGroup $group) {
-                $group->daysSinceLastActivity = $group->daysSinceLastActivity();
-                $group->isGhost = $group->daysSinceLastActivity > config('thesisbridge.ghost_threshold_days');
-                return $group;
-            });
-
-        return view('thesis-groups.supervised', ['groups' => $groups]);
-    }
-
 }
