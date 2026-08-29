@@ -96,6 +96,7 @@ class ThesisGroupController extends Controller
             'group' => $thesis_group,
             'isSupervisor' => $isSupervisor,
             'isMember' => $isMember,
+            'activityHeatmap' => $thesis_group->activityHeatmap(),
         ]);
     }
 
