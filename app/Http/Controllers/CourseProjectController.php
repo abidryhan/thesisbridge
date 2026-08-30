@@ -99,17 +99,20 @@ class CourseProjectController extends Controller
 
     public function show(CourseProject $course_project): View
     {
-        $course_project->load(['students.user', 'continuedFrom', 'continuations']);
+        $course_project->load(['students.user', 'continuedFrom', 'continuations', 'contributions']);
 
         $isOwner = auth()->check() && auth()->id() === $course_project->user_id;
 
         $currentStudent = auth()->check() ? auth()->user()->student : null;
         $isTeamMember = $currentStudent && $course_project->students->contains('id', $currentStudent->id);
+        $canLogContribution = $isTeamMember && !$course_project->contributions->contains('student_id', $currentStudent->id);
+     
 
         return view('course-projects.show', [
             'project' => $course_project,
             'isOwner' => $isOwner,
             'canToggle' => $isOwner || $isTeamMember,
+            'canLogContribution' => $canLogContribution,
         ]);
     }
 
