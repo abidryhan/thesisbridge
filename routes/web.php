@@ -67,6 +67,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('proposals/{proposal}/approve', [ProposalController::class, 'approve'])->name('proposals.approve');
     Route::patch('proposals/{proposal}/request-revision', [ProposalController::class, 'requestRevision'])->name('proposals.request-revision');
     Route::patch('proposals/{proposal}/reject', [ProposalController::class, 'reject'])->name('proposals.reject');
+
+    Route::resource('course-projects.contributions', ContributionController::class)->only(['create', 'store']);
+
 });
 
 Route::resource('course-projects', CourseProjectController::class)->only(['show']);
