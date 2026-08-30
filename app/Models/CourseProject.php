@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class CourseProject extends Model
 {
     use HasFactory;
+    public function contributions(): HasMany
+{
+    return $this->hasMany(Contribution::class);
+}
+
 
     protected $fillable = [
         'user_id',

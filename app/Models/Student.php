@@ -17,6 +17,11 @@ class Student extends Model
         'academic_year',
         'research_interests',
     ];
+    public function contributions(): HasMany
+{
+    return $this->hasMany(Contribution::class);
+}
+
 
     public function user(): BelongsTo
     {
