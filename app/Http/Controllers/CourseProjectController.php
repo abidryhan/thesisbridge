@@ -106,7 +106,6 @@ class CourseProjectController extends Controller
         $currentStudent = auth()->check() ? auth()->user()->student : null;
         $isTeamMember = $currentStudent && $course_project->students->contains('id', $currentStudent->id);
         $canLogContribution = $isTeamMember && !$course_project->contributions->contains('student_id', $currentStudent->id);
-     
 
         return view('course-projects.show', [
             'project' => $course_project,

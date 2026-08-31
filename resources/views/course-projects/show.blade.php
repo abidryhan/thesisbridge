@@ -41,37 +41,36 @@
         </div>
 
         <div class="mb-6">
-    <span class="font-medium block mb-2">Contribution Breakdown</span>
-    @forelse ($project->students as $member)
-        @php
-            $contribution = $project->contributions->firstWhere('student_id', $member->id);
-        @endphp
-        <div class="border rounded p-3 mb-2">
-            <div class="flex justify-between items-start">
-                <span class="font-medium text-sm">{{ $member->user->name }}</span>
-                @if ($contribution && $contribution->percentage !== null)
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded">
-                        ~{{ $contribution->percentage }}% (self-reported)
-                    </span>
-                @endif
-            </div>
-            @if ($contribution)
-                <p class="text-sm text-gray-600 mt-1">{{ $contribution->description }}</p>
-            @else
-                <p class="text-sm text-gray-400 mt-1 italic">No contribution logged yet.</p>
+            <span class="font-medium block mb-2">Contribution Breakdown</span>
+            @forelse ($project->students as $member)
+                @php
+                    $contribution = $project->contributions->firstWhere('student_id', $member->id);
+                @endphp
+                <div class="border rounded p-3 mb-2">
+                    <div class="flex justify-between items-start">
+                        <span class="font-medium text-sm">{{ $member->user->name }}</span>
+                        @if ($contribution && $contribution->percentage !== null)
+                            <span class="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded">
+                                ~{{ $contribution->percentage }}% (self-reported)
+                            </span>
+                        @endif
+                    </div>
+                    @if ($contribution)
+                        <p class="text-sm text-gray-600 mt-1">{{ $contribution->description }}</p>
+                    @else
+                        <p class="text-sm text-gray-400 mt-1 italic">No contribution logged yet.</p>
+                    @endif
+                </div>
+            @empty
+                <p class="text-gray-500 text-sm">No linked team members on this project.</p>
+            @endforelse
+
+            @if ($canLogContribution)
+                <a href="{{ route('course-projects.contributions.create', $project) }}" class="text-blue-600 text-sm underline">
+                    Log Your Contribution
+                </a>
             @endif
         </div>
-    @empty
-        <p class="text-gray-500 text-sm">No linked team members on this project.</p>
-    @endforelse
-
-    @if ($canLogContribution)
-        <a href="{{ route('course-projects.contributions.create', $project) }}" class="text-blue-600 text-sm underline">
-            Log Your Contribution
-        </a>
-    @endif
-    
-</div>
 
 
         @if ($project->continuedFrom)

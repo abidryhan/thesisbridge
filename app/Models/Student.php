@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
 {
@@ -17,11 +18,6 @@ class Student extends Model
         'academic_year',
         'research_interests',
     ];
-    public function contributions(): HasMany
-{
-    return $this->hasMany(Contribution::class);
-}
-
 
     public function user(): BelongsTo
     {
@@ -51,4 +47,10 @@ class Student extends Model
             ->countBy()
             ->sortDesc();
     }
+
+    public function contributions(): HasMany
+    {
+        return $this->hasMany(Contribution::class);
+    }
+
 }
