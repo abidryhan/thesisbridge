@@ -33,11 +33,20 @@ class CheckMilestoneDeadlines extends Command
 
         foreach ($milestones as $milestone) {
             foreach ($milestone->thesisGroup->students as $student) {
-                $student->user->notify(new MilestoneDeadlineApproaching($milestone));
+                $user = $student->user;
+
+                $alreadySent = $user->notifications()
+                    ->where('type', MilestoneDeadlineApproaching::class)
+                    ->where('data->milestone_id', $milestone->id)
+                    ->exists();
+
+                if (!$alreadySent) {
+                    $user->notify(new MilestoneDeadlineApproaching($milestone));
+                }
             }
         }
 
-        $this->info("Sent reminders for {$milestones->count()} milestone(s).");
+        $this->info("Checked {$milestones->count()} milestone(s) for reminders.");
     }
 
     protected function sendEscalations(): void
@@ -52,11 +61,22 @@ class CheckMilestoneDeadlines extends Command
         foreach ($milestones as $milestone) {
             $supervisor = $milestone->thesisGroup->supervisor;
 
-            if ($supervisor) {
-                $supervisor->user->notify(new MilestoneOverdueEscalation($milestone));
+            if (!$supervisor || !$supervisor->user) {
+                continue;
+            }
+
+            $user = $supervisor->user;
+
+            $alreadySent = $user->notifications()
+                ->where('type', MilestoneOverdueEscalation::class)
+                ->where('data->milestone_id', $milestone->id)
+                ->exists();
+
+            if (!$alreadySent) {
+                $user->notify(new MilestoneOverdueEscalation($milestone));
             }
         }
 
-        $this->info("Sent escalations for {$milestones->count()} milestone(s).");
+        $this->info("Checked {$milestones->count()} milestone(s) for escalations.");
     }
 }
