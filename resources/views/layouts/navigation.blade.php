@@ -1,3 +1,4 @@
+```blade
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,6 +30,23 @@
                                 {{ __('My Supervised Groups') }}
                             </x-nav-link>
                         @endif
+
+                        @php
+                            $unreadCount = auth()->user()->unreadNotifications->count();
+                        @endphp
+
+                        <x-nav-link
+                            :href="route('notifications.index')"
+                            :active="request()->routeIs('notifications.index')"
+                        >
+                            {{ __('Notifications') }}
+
+                            @if ($unreadCount > 0)
+                                <span class="bg-red-600 text-white text-xs rounded-full px-2 py-0.5 ml-1">
+                                    {{ $unreadCount }}
+                                </span>
+                            @endif
+                        </x-nav-link>
                     @endauth
 
                     <x-nav-link :href="route('course-projects.index')" :active="request()->routeIs('course-projects.*')">
@@ -62,9 +80,11 @@
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
 
-                                <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault();
-                                                    this.closest('form').submit();">
+                                <x-dropdown-link
+                                    :href="route('logout')"
+                                    onclick="event.preventDefault();
+                                        this.closest('form').submit();"
+                                >
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
                             </form>
@@ -85,10 +105,28 @@
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                <button
+                    @click="open = ! open"
+                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                >
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <path
+                            :class="{'hidden': open, 'inline-flex': ! open }"
+                            class="inline-flex"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"
+                        />
+
+                        <path
+                            :class="{'hidden': ! open, 'inline-flex': open }"
+                            class="hidden"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
                     </svg>
                 </button>
             </div>
@@ -115,6 +153,23 @@
                         {{ __('My Supervised Groups') }}
                     </x-responsive-nav-link>
                 @endif
+
+                @php
+                    $unreadCount = auth()->user()->unreadNotifications->count();
+                @endphp
+
+                <x-responsive-nav-link
+                    :href="route('notifications.index')"
+                    :active="request()->routeIs('notifications.index')"
+                >
+                    {{ __('Notifications') }}
+
+                    @if ($unreadCount > 0)
+                        <span class="bg-red-600 text-white text-xs rounded-full px-2 py-0.5 ml-1">
+                            {{ $unreadCount }}
+                        </span>
+                    @endif
+                </x-responsive-nav-link>
             @endauth
 
             <x-responsive-nav-link :href="route('course-projects.index')" :active="request()->routeIs('course-projects.*')">
@@ -144,9 +199,11 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
 
-                        <x-responsive-nav-link :href="route('logout')"
-                                onclick="event.preventDefault();
-                                            this.closest('form').submit();">
+                        <x-responsive-nav-link
+                            :href="route('logout')"
+                            onclick="event.preventDefault();
+                                this.closest('form').submit();"
+                        >
                             {{ __('Log Out') }}
                         </x-responsive-nav-link>
                     </form>
@@ -165,3 +222,4 @@
         @endauth
     </div>
 </nav>
+```
