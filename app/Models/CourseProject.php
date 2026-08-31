@@ -55,4 +55,10 @@ class CourseProject extends Model
     {
         return $this->hasMany(CourseProject::class, 'continued_from_id');
     }
+
+    public function contributions(): HasMany
+    {
+        return $this->hasMany(Contribution::class);
+    }
+
 }

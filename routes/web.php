@@ -12,6 +12,7 @@ use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\SupervisorMatchController;
 use App\Http\Controllers\ThesisGroupController;
 use App\Http\Controllers\ResearchThreadMapController;
+use App\Http\Controllers\ContributionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -45,6 +46,10 @@ Route::middleware('auth')->group(function () {
         ->name('course-projects.toggle-continuation');
 
 
+    Route::resource('course-projects.contributions', ContributionController::class)->only(['create', 'store']);
+
+
+
     Route::get('thesis-groups/supervised', [ThesisGroupController::class, 'supervised'])
         ->name('thesis-groups.supervised');
 
@@ -67,6 +72,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('proposals/{proposal}/approve', [ProposalController::class, 'approve'])->name('proposals.approve');
     Route::patch('proposals/{proposal}/request-revision', [ProposalController::class, 'requestRevision'])->name('proposals.request-revision');
     Route::patch('proposals/{proposal}/reject', [ProposalController::class, 'reject'])->name('proposals.reject');
+
+
+
 });
 
 Route::resource('course-projects', CourseProjectController::class)->only(['show']);
