@@ -1,3 +1,4 @@
+```php
 <?php
 
 use App\Http\Controllers\CourseProjectController;
@@ -5,6 +6,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\StudentController;
@@ -30,9 +32,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('course-projects', CourseProjectController::class)->only(['index']);
+
 Route::get('research-thread-map', [ResearchThreadMapController::class, 'index'])
     ->name('research-thread-map');
-
 
 Route::middleware('auth')->group(function () {
     Route::resource('students', StudentController::class)->except(['index']);
@@ -42,41 +44,65 @@ Route::middleware('auth')->group(function () {
     // Feature 12 - Continuation routes
     Route::get('course-projects/{course_project}/claim', [CourseProjectController::class, 'claim'])
         ->name('course-projects.claim');
+
     Route::patch('course-projects/{course_project}/toggle-continuation', [CourseProjectController::class, 'toggleContinuation'])
         ->name('course-projects.toggle-continuation');
 
-
     Route::resource('course-projects.contributions', ContributionController::class)->only(['create', 'store']);
-
-
 
     Route::get('thesis-groups/supervised', [ThesisGroupController::class, 'supervised'])
         ->name('thesis-groups.supervised');
 
     Route::resource('thesis-groups', ThesisGroupController::class);
-    Route::resource('proposals', ProposalController::class)->only(['create', 'store', 'show', 'edit', 'update']);
-    Route::resource('thesis-groups.milestones', MilestoneController::class)->only(['create', 'store']);
+
+    Route::resource('proposals', ProposalController::class)
+        ->only(['create', 'store', 'show', 'edit', 'update']);
+
+    Route::resource('thesis-groups.milestones', MilestoneController::class)
+        ->only(['create', 'store']);
+
     Route::patch('thesis-groups/{thesis_group}/milestones/{milestone}/toggle-complete', [MilestoneController::class, 'toggleComplete'])
         ->name('thesis-groups.milestones.toggle-complete');
-    Route::resource('thesis-groups.milestones.documents', DocumentController::class)->only(['index', 'create', 'store']);
-    Route::resource('thesis-groups.meetings', MeetingController::class)->only(['index', 'create', 'store']);
-    Route::resource('thesis-groups.milestones.feedback', FeedbackController::class)->only(['index', 'create', 'store']);
+
+    Route::resource('thesis-groups.milestones.documents', DocumentController::class)
+        ->only(['index', 'create', 'store']);
+
+    Route::resource('thesis-groups.meetings', MeetingController::class)
+        ->only(['index', 'create', 'store']);
+
+    Route::resource('thesis-groups.milestones.feedback', FeedbackController::class)
+        ->only(['index', 'create', 'store']);
 
     Route::get('thesis-groups/{thesis_group}/supervisor-matches', [SupervisorMatchController::class, 'index'])
         ->name('thesis-groups.supervisor-matches');
+
     Route::patch('thesis-groups/{thesis_group}/supervisor', [ThesisGroupController::class, 'chooseSupervisor'])
         ->name('thesis-groups.choose-supervisor');
 
-    Route::post('proposals/{proposal}/resubmit', [ProposalController::class, 'resubmit'])->name('proposals.resubmit');
-    Route::patch('proposals/{proposal}/start-review', [ProposalController::class, 'startReview'])->name('proposals.start-review');
-    Route::patch('proposals/{proposal}/approve', [ProposalController::class, 'approve'])->name('proposals.approve');
-    Route::patch('proposals/{proposal}/request-revision', [ProposalController::class, 'requestRevision'])->name('proposals.request-revision');
-    Route::patch('proposals/{proposal}/reject', [ProposalController::class, 'reject'])->name('proposals.reject');
+    Route::post('proposals/{proposal}/resubmit', [ProposalController::class, 'resubmit'])
+        ->name('proposals.resubmit');
 
+    Route::patch('proposals/{proposal}/start-review', [ProposalController::class, 'startReview'])
+        ->name('proposals.start-review');
 
+    Route::patch('proposals/{proposal}/approve', [ProposalController::class, 'approve'])
+        ->name('proposals.approve');
 
+    Route::patch('proposals/{proposal}/request-revision', [ProposalController::class, 'requestRevision'])
+        ->name('proposals.request-revision');
+
+    Route::patch('proposals/{proposal}/reject', [ProposalController::class, 'reject'])
+        ->name('proposals.reject');
+
+    // Feature 19 - Notifications
+    Route::get('notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+
+    Route::patch('notifications/{notificationId}/read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.read');
 });
 
 Route::resource('course-projects', CourseProjectController::class)->only(['show']);
 
 require __DIR__.'/auth.php';
+
