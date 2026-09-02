@@ -16,15 +16,10 @@ class NotificationController extends Controller
 
     public function markAsRead(string $notificationId): RedirectResponse
     {
-        $notification = auth()->user()->notifications()
-            ->where('id', $notificationId)
-            ->firstOrFail();
-
+        $notification = auth()->user()->notifications()->where('id', $notificationId)->firstOrFail();
         $notification->markAsRead();
 
-        return redirect()->route(
-            'thesis-groups.show',
-            $notification->data['thesis_group_id']
-        );
+        return redirect()->route('notifications.index');
     }
+
 }

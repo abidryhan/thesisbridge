@@ -106,4 +106,57 @@ class Supervisor extends Model
 
         return (int) round((count($intersection) / count($union)) * 100);
     }
+
+    public function weeklyDigestData(): array
+    {
+        $today = \Illuminate\Support\Carbon::today();
+        $sevenDaysOut = $today->copy()->addDays(7);
+
+        $activeGroups = $this->thesisGroups()
+            ->with('milestones')
+            ->get()
+            ->reject(fn (ThesisGroup $group) => $group->isCompleted());
+
+        $upcomingMilestones = [];
+        $overdueMilestones = [];
+        $ghostGroups = [];
+
+        foreach ($activeGroups as $group) {
+            foreach ($group->milestones as $milestone) {
+                if ($milestone->completed_at !== null) {
+                    continue;
+                }
+
+                if ($milestone->deadline->lte($today)) {
+                    $overdueMilestones[] = [
+                        'group_name' => $group->group_name,
+                        'milestone_title' => $milestone->title,
+                        'deadline' => $milestone->deadline->toDateString(),
+                    ];
+                } elseif ($milestone->deadline->lte($sevenDaysOut)) {
+                    $upcomingMilestones[] = [
+                        'group_name' => $group->group_name,
+                        'milestone_title' => $milestone->title,
+                        'deadline' => $milestone->deadline->toDateString(),
+                    ];
+                }
+            }
+
+            if ($group->isGhost()) {
+                $ghostGroups[] = [
+                    'group_name' => $group->group_name,
+                    'days_since_activity' => $group->daysSinceLastActivity(),
+                ];
+            }
+        }
+
+        return [
+            'active_group_count' => $activeGroups->count(),
+            'upcoming_milestones' => $upcomingMilestones,
+            'overdue_milestones' => $overdueMilestones,
+            'ghost_groups' => $ghostGroups,
+            'is_all_clear' => empty($upcomingMilestones) && empty($overdueMilestones) && empty($ghostGroups),
+        ];
+    }
+
 }
