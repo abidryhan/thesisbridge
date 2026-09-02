@@ -29,9 +29,9 @@ class WeeklySupervisorDigest extends Notification
             'is_all_clear' => $this->digestData['is_all_clear'],
             'message' => $this->digestData['is_all_clear']
                 ? "Weekly digest: all {$this->digestData['active_group_count']} active group(s) look healthy this week."
-                : 'Weekly digest: ' . count($this->digestData['upcoming_milestones']) . ' upcoming, '
-                    . count($this->digestData['overdue_milestones']) . ' overdue, '
-                    . count($this->digestData['ghost_groups']) . ' ghost-flagged group(s).',
+                : 'Weekly digest: '.count($this->digestData['upcoming_milestones']).' upcoming, '
+                    .count($this->digestData['overdue_milestones']).' overdue, '
+                    .count($this->digestData['ghost_groups']).' ghost-flagged group(s).',
         ];
     }
 }

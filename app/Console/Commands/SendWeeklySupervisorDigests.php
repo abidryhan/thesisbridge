@@ -17,9 +17,7 @@ class SendWeeklySupervisorDigests extends Command
         $supervisors = Supervisor::with('user')->get();
 
         foreach ($supervisors as $supervisor) {
-            $supervisor->user->notify(
-                new WeeklySupervisorDigest($supervisor->weeklyDigestData())
-            );
+            $supervisor->user->notify(new WeeklySupervisorDigest($supervisor->weeklyDigestData()));
         }
 
         $this->info("Sent weekly digests to {$supervisors->count()} supervisor(s).");
