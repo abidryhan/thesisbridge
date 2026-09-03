@@ -184,6 +184,27 @@ class ThesisGroupController extends Controller
             ->with('success', "Supervisor set to {$supervisor->user->name}.");
     }
 
+    public function supervised(): View
+    {
+        $supervisor = auth()->user()->supervisor;
+
+        if (!$supervisor) {
+            abort(403);
+        }
+
+        $groups = $supervisor->thesisGroups()
+            ->with('students.user')
+            ->latest()
+            ->get()
+            ->map(function (ThesisGroup $group) {
+                $group->daysSinceLastActivity = $group->daysSinceLastActivity();
+                $group->isGhost = $group->daysSinceLastActivity > config('thesisbridge.ghost_threshold_days');
+                return $group;
+            });
+
+        return view('thesis-groups.supervised', ['groups' => $groups]);
+    }
+
     protected function authorizeAccess(ThesisGroup $thesis_group): void
     {
         if (!$thesis_group->isAccessibleBy(auth()->user())) {
