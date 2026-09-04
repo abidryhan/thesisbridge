@@ -18,11 +18,23 @@ class SupervisorController extends Controller
                 ->with('error', 'You already have a supervisor profile.');
         }
 
+        if ($currentStudent = auth()->user()->student) {
+            return redirect()->route('students.show', $currentStudent)
+                ->with('error', 'Your account is already registered as a Student. An account can only be a Student or a Supervisor, not both.');
+        }
+
         return view('supervisors.create');
+
+
     }
 
     public function store(Request $request): RedirectResponse
     {
+
+        if ($currentStudent = auth()->user()->student) {
+                    return redirect()->route('students.show', $currentStudent)
+                        ->with('error', 'Your account is already registered as a Student. An account can only be a Student or a Supervisor, not both.');
+        }
         $validated = $request->validate([
             'designation' => 'required|string|max:255',
             'research_areas' => 'required|string',
