@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'ghost_threshold_days' => 14,
+    'ghost_threshold_days' => 1,
 ];
