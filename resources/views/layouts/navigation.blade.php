@@ -72,6 +72,10 @@
                         {{ __('Course Projects') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('research-thread-map')" :active="request()->routeIs('research-thread-map')">
+                        {{ __('Research Threads') }}
+                    </x-nav-link>
+
                 </div>
             </div>
 
@@ -109,6 +113,16 @@
                         </x-slot>
 
                         <x-slot name="content">
+
+                            @if (auth()->user()->student)
+                                <x-dropdown-link :href="route('students.show', auth()->user()->student)">
+                                    {{ __('My Student Profile') }}
+                                </x-dropdown-link>
+                            @elseif (auth()->user()->supervisor)
+                                <x-dropdown-link :href="route('supervisors.show', auth()->user()->supervisor)">
+                                    {{ __('My Supervisor Profile') }}
+                                </x-dropdown-link>
+                            @endif
 
                             <!-- Profile -->
                             <x-dropdown-link :href="route('profile.edit')">
@@ -264,6 +278,10 @@
                 {{ __('Course Projects') }}
             </x-responsive-nav-link>
 
+            <x-responsive-nav-link :href="route('research-thread-map')" :active="request()->routeIs('research-thread-map')">
+                {{ __('Research Threads') }}
+            </x-responsive-nav-link>
+
         </div>
 
 
@@ -286,6 +304,18 @@
 
 
                 <div class="mt-3 space-y-1">
+
+                    @if (auth()->user()->student)
+                        <x-responsive-nav-link :href="route('students.show', auth()->user()->student)">
+                            {{ __('My Student Profile') }}
+                        </x-responsive-nav-link>
+                    @elseif (auth()->user()->supervisor)
+                        <x-responsive-nav-link :href="route('supervisors.show', auth()->user()->supervisor)">
+                            {{ __('My Supervisor Profile') }}
+                        </x-responsive-nav-link>
+                    @endif
+
+
 
                     <!-- Profile -->
                     <x-responsive-nav-link :href="route('profile.edit')">
